@@ -10,10 +10,10 @@ const CardsInfo = styled(Flex)`
   background-color: bisque;
   flex-direction: column;
   width: 11rem;
-  height: 30rem;
+  height: 32rem;
   margin: 1rem;
   padding: 1rem 1.1rem 3rem;
-  font-size: 0.9rem;
+  font-size: 1rem;
   border-radius: 5px;
   position: relative;
 `;
@@ -27,8 +27,7 @@ export const ButtonCard = styled.button`
   position: absolute;
   bottom: 5px;
   transition: all 0.3s;
-  font-family: "Lilita One", cursive;
-
+  font-family: "Nougat", sans-serif;
   &:active {
     transform: scale(0.97);
   }

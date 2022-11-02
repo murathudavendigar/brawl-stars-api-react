@@ -1,11 +1,12 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ButtonCard } from "../styles/Card.styled";
 import DetailMain from "../styles/Detail.styled";
+import { SearchButton } from "../styles/Header.styled";
 
 const Detail = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
+  console.log(state);
 
   return (
     <DetailMain>
@@ -29,7 +30,7 @@ const Detail = () => {
           </>
         );
       })}
-      <ButtonCard onClick={() => navigate(-1)}>GO BACK</ButtonCard>
+      <SearchButton onClick={() => navigate(-1)}>GO BACK</SearchButton>
     </DetailMain>
   );
 };

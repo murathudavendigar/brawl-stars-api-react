@@ -6,6 +6,7 @@ import Cards from "../components/Cards";
 
 const Home = () => {
   const [info, setInfo] = useState([]);
+  const [searchName, setSearchName] = useState("");
 
   const url = "https://api.brawlapi.com/v1/brawlers";
 
@@ -14,7 +15,7 @@ const Home = () => {
     setInfo(data?.list);
   };
 
-  console.log(info);
+  console.log(searchName);
 
   useEffect(() => {
     getData();
@@ -22,8 +23,8 @@ const Home = () => {
 
   return (
     <HomeMainDiv>
-      <Header />
-      <Cards info={info} />
+      <Header setSearchName={setSearchName} />
+      <Cards info={info} searchName={searchName} />
     </HomeMainDiv>
   );
 };

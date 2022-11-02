@@ -1,8 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import CardsInfo, { ButtonCard, CardMain } from "../styles/Card.styled";
 
-const Cards = ({ info }) => {
+const Cards = ({ info, searchName }) => {
   const navigate = useNavigate();
+
+  console.log(searchName);
 
   return (
     <>
@@ -10,7 +12,7 @@ const Cards = ({ info }) => {
         {info.map((item, index) => {
           return (
             <CardsInfo key={index} justify="baseline">
-              <h3>{item.name}</h3>
+              <h2>{item.name}</h2>
               <img src={item.imageUrl} alt="" width="150px" />
               <p>{item.description}</p>
               <ButtonCard onClick={() => navigate("detail", { state: item })}>
