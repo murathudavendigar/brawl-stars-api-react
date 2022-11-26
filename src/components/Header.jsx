@@ -5,23 +5,21 @@ import HeaderDiv, {
   SelectList,
 } from "../styles/Header.styled";
 
-const Header = ({ setSearchName }) => {
-  const [name, setName] = useState("");
-
+const Header = ({ setSearchName, setSearchType }) => {
   return (
     <HeaderDiv wrap="wrap">
       <SearchInput
         type="text"
         placeholder="Search By Name"
-        onChange={(e) => setName(e.target.value)}
+        onChange={(e) => setSearchName(e.target.value)}
       />
-      <SearchButton onClick={() => setSearchName(name)}>Search</SearchButton>
-      <SelectList>
-        <option>Brawlers</option>
-        <option>Events</option>
-        <option>Maps</option>
-        <option>Game Modes</option>
-        <option>Icons</option>
+      <SearchButton>Search</SearchButton>
+      <SelectList onChange={(e) => setSearchType(e.target.value)}>
+        <option value="brawlers">Brawlers</option>
+        <option value="events">Events</option>
+        <option value="maps">Maps</option>
+        <option value="gamemodes">Game Modes</option>
+        <option value="icons">Icons</option>
       </SelectList>
     </HeaderDiv>
   );

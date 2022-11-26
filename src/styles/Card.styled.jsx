@@ -9,13 +9,15 @@ export const CardMain = styled(Flex)`
 const CardsInfo = styled(Flex)`
   background-color: bisque;
   flex-direction: column;
-  width: 11rem;
+  width: 12rem;
   height: 32rem;
   margin: 1rem;
   padding: 1rem 1.1rem 3rem;
   font-size: 1rem;
   border-radius: 5px;
   position: relative;
+  overflow-x: hidden;
+  overflow-y: scroll;
 `;
 
 export default CardsInfo;

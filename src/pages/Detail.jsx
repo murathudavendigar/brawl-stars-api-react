@@ -20,14 +20,14 @@ const Detail = () => {
 
       <h5>{state.description}</h5>
       {state?.starPowers.length > 0 && <h2>Star Powers</h2>}
-      {state?.starPowers.map((item) => {
+      {state?.starPowers.map((item, index) => {
         return (
-          <>
+          <div key={index}>
             <h4>{item?.name}</h4>
 
             <img src={item?.imageUrl} alt="" width="100px" />
             <p>{item?.description}</p>
-          </>
+          </div>
         );
       })}
       <SearchButton onClick={() => navigate(-1)}>GO BACK</SearchButton>
