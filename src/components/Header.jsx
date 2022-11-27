@@ -16,10 +16,8 @@ const Header = ({ setSearchName, setSearchType }) => {
       <SearchButton>Search</SearchButton>
       <SelectList onChange={(e) => setSearchType(e.target.value)}>
         <option value="brawlers">Brawlers</option>
-        <option value="events">Events</option>
         <option value="maps">Maps</option>
         <option value="gamemodes">Game Modes</option>
-        <option value="icons">Icons</option>
       </SelectList>
     </HeaderDiv>
   );

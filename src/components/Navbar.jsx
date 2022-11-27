@@ -12,8 +12,8 @@ const Navbar = () => {
       <NavbarLogo src={NavbarLogoImg} />
       <NavbarMenuLink>
         <NavbarLink to="/">Home</NavbarLink>
+        <NavbarLink to="events">Events</NavbarLink>
         <NavbarLink to="about">About</NavbarLink>
-        <NavbarLink to="videos">Videos</NavbarLink>
       </NavbarMenuLink>
     </Nav>
   );
