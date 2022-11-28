@@ -39,24 +39,30 @@ const Cards = ({ info, searchName, searchType }) => {
       )}
       {searchType === "maps" && (
         <CardMain wrap="wrap">
-          {info?.map((item, index) => {
-            return (
-              <CardsInfo
-                key={index}
-                justify="baseline"
-                style={{ backgroundColor: `${item?.gameMode?.color}` }}>
-                <h2 style={{ textAlign: "center" }}>{item?.name}</h2>
-                <p style={{ textAlign: "center" }}>-{item?.gameMode?.name}-</p>
-                <img src={item?.imageUrl} alt="" width="150px" />
-                <p>{item?.description}</p>
+          {info
+            ?.filter((x) =>
+              x?.name.toLowerCase().includes(searchName.toLowerCase())
+            )
+            .map((item, index) => {
+              return (
+                <CardsInfo
+                  key={index}
+                  justify="baseline"
+                  style={{ backgroundColor: `${item?.gameMode?.color}` }}>
+                  <h2 style={{ textAlign: "center" }}>{item?.name}</h2>
+                  <p style={{ textAlign: "center" }}>
+                    -{item?.gameMode?.name}-
+                  </p>
+                  <img src={item?.imageUrl} alt="" width="150px" />
+                  <p>{item?.description}</p>
 
-                <ButtonCard
-                  onClick={() => (window.location.href = `${item?.link}`)}>
-                  View Details
-                </ButtonCard>
-              </CardsInfo>
-            );
-          })}
+                  <ButtonCard
+                    onClick={() => (window.location.href = `${item?.link}`)}>
+                    View Details
+                  </ButtonCard>
+                </CardsInfo>
+              );
+            })}
         </CardMain>
       )}
       {searchType === "icons" && (
