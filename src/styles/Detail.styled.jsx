@@ -2,7 +2,6 @@ import styled from "styled-components";
 import Flex from "./Flex.styled";
 
 const DetailMain = styled(Flex)`
-  background-color: bisque;
   flex-direction: column;
   padding: 1rem 1.5rem;
 `;

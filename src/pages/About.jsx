@@ -3,7 +3,7 @@ import { FaGithub, FaInstagram, FaLinkedinIn, FaTwitter } from "react-icons/fa";
 import SocialDiv from "../styles/About.styled";
 
 const styledSocialLogo = {
-  marginRight: "1rem",
+  marginRight: "1.2rem",
   transition: "all 0.5s",
   cursor: "pointer",
 };
@@ -12,7 +12,7 @@ const About = () => {
   return (
     <>
       <Flex style={{ flexDirection: "column" }}>
-        <h1>Designed By: Captain Price</h1>
+        <h1 style={{ color: "white" }}>Designed By: Captain Price</h1>
 
         <SocialDiv>
           <FaTwitter

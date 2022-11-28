@@ -9,7 +9,10 @@ const Detail = () => {
   const navigate = useNavigate();
 
   return (
-    <DetailMain style={{ backgroundColor: `${state?.rarity?.color}` }}>
+    <DetailMain
+      style={{
+        backgroundImage: `linear-gradient(0deg, ${state?.rarity?.color}, rgb(33, 134, 255,0.01))`,
+      }}>
       <div style={{ marginBottom: "1rem", textAlign: "center" }}>
         <h1>
           <img src={state.imageUrl3} alt="" width="40px" /> {state.name}{" "}
