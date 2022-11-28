@@ -9,7 +9,9 @@ import NavbarLogoImg from "../assets/Brawl_Stars_logo.png";
 const Navbar = () => {
   return (
     <Nav>
-      <NavbarLogo src={NavbarLogoImg} />
+      <NavbarLink to="/">
+        <NavbarLogo src={NavbarLogoImg} />
+      </NavbarLink>
       <NavbarMenuLink>
         <NavbarLink to="/">Home</NavbarLink>
         <NavbarLink to="events">Events</NavbarLink>

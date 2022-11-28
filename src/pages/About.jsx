@@ -11,9 +11,8 @@ const styledSocialLogo = {
 const About = () => {
   return (
     <>
-      <Flex style={{ flexDirection: "column", gap: "1.2rem" }}>
+      <Flex style={{ flexDirection: "column" }}>
         <h1>Designed By: Captain Price</h1>
-        <h1>Murat Hüdavendigâr Öncü</h1>
 
         <SocialDiv>
           <FaTwitter
