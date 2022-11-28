@@ -14,6 +14,7 @@ const Home = () => {
   const getData = async () => {
     const { data } = await axios(url);
     setInfo(data?.list);
+    console.log(info);
   };
 
   useEffect(() => {

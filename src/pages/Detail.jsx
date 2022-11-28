@@ -10,16 +10,44 @@ const Detail = () => {
   console.log(state);
 
   return (
-    <DetailMain>
-      <div>
+    <DetailMain style={{ backgroundColor: `${state?.rarity?.color}` }}>
+      <div style={{ marginBottom: "1rem", textAlign: "center" }}>
         <h1>
-          <img src={state.imageUrl3} alt="" width="40px" /> {state.name}
+          <img src={state.imageUrl3} alt="" width="40px" /> {state.name}{" "}
           <img src={state.imageUrl3} alt="" width="40px" />
         </h1>
+        <h4 style={{ marginTop: "0.5rem" }}>
+          <em>
+            {state?.class?.name} / {state?.rarity?.name}
+          </em>
+        </h4>
       </div>
       <img src={state.imageUrl} alt="" width="150px" />
 
-      <h5>{state.description}</h5>
+      <h4 style={{ margin: "1rem 0" }}>{state.description}</h4>
+      {state?.gadgets.length > 0 && <h2>Gadgets</h2>}
+      <Flex
+        style={{ flexDirection: "column", marginBottom: "1rem" }}
+        align="start">
+        {state?.gadgets.map((item, index) => {
+          return (
+            <div
+              key={index}
+              style={{ borderBottom: "1px solid black", width: "100%" }}>
+              <Flex
+                justify="flex-start"
+                style={{ margin: "0.6rem 0", gap: "1rem" }}>
+                <img src={item?.imageUrl} alt="" width="30px" />
+                <h4>-- {item?.name}</h4>
+              </Flex>
+              <p>{item?.description}</p>
+
+              <hr />
+            </div>
+          );
+        })}
+      </Flex>
+
       {state?.starPowers.length > 0 && <h2>Star Powers</h2>}
       <Flex style={{ flexDirection: "column" }} align="start">
         {state?.starPowers.map((item, index) => {
@@ -27,9 +55,11 @@ const Detail = () => {
             <div
               key={index}
               style={{ borderBottom: "1px solid black", width: "100%" }}>
-              <Flex justify="flex-start" style={{ margin: "0.6rem 0" }}>
-                <h4 style={{ color: "rgb(240,25,25)" }}>-- {item?.name}</h4>
+              <Flex
+                justify="flex-start"
+                style={{ margin: "0.6rem 0", gap: "1rem" }}>
                 <img src={item?.imageUrl} alt="" width="30px" />
+                <h4>-- {item?.name}</h4>
               </Flex>
               <p>{item?.description}</p>
 

@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import CardsInfo, { ButtonCard, CardMain } from "../styles/Card.styled";
 
 const Cards = ({ info, searchName, searchType }) => {
@@ -41,8 +41,12 @@ const Cards = ({ info, searchName, searchType }) => {
         <CardMain wrap="wrap">
           {info?.map((item, index) => {
             return (
-              <CardsInfo key={index} justify="baseline">
-                <h2>{item?.name}</h2>
+              <CardsInfo
+                key={index}
+                justify="baseline"
+                style={{ backgroundColor: `${item?.gameMode?.color}` }}>
+                <h2 style={{ textAlign: "center" }}>{item?.name}</h2>
+                <p style={{ textAlign: "center" }}>-{item?.gameMode?.name}-</p>
                 <img src={item?.imageUrl} alt="" width="150px" />
                 <p>{item?.description}</p>
 
