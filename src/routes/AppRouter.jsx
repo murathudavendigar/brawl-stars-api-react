@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import Detail from "../pages/Detail";
 import About from "../pages/About";
 import Events from "../pages/Events";
+import ScrollButton from "../components/ScrollButton";
 
 const AppRouter = () => {
   return (
@@ -17,6 +18,7 @@ const AppRouter = () => {
         <Route path="about" element={<About />} />
         <Route path="events" element={<Events />} />
       </Routes>
+      <ScrollButton />
     </BrowserRouter>
   );
 };
