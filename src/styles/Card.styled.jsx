@@ -7,7 +7,7 @@ export const CardMain = styled(Flex)`
 `;
 
 const CardsInfo = styled(Flex)`
-  background-color: bisque;
+  background-color: #edb879;
   flex-direction: column;
   width: 12rem;
   height: 32rem;
@@ -17,7 +17,6 @@ const CardsInfo = styled(Flex)`
   border-radius: 5px;
   position: relative;
   overflow-x: hidden;
-  overflow-y: scroll;
 `;
 
 export default CardsInfo;
@@ -29,7 +28,7 @@ export const ButtonCard = styled.button`
   position: absolute;
   bottom: 5px;
   transition: all 0.3s;
-  font-family: "Nougat", sans-serif;
+  font-family: "Lilita One", cursive;
   &:active {
     transform: scale(0.97);
   }
