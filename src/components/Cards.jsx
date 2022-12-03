@@ -17,7 +17,7 @@ const Cards = ({ info, searchName, searchType }) => {
       setFirst(first + 10);
     }, 5000);
   }, [first]);
-  console.log(mapInfo);
+
   return (
     <>
       {searchType === "brawlers" && (
