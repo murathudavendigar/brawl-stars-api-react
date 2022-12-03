@@ -12,7 +12,7 @@ export const SearchInput = styled.input`
   padding: 0.5rem 1rem;
   background: transparent;
   border-radius: 5px;
-  font-family: "Nougat", sans-serif;
+  font-family: "Lilita One", cursive;
   transition: all 0.4s;
   font-weight: 800;
   font-size: 1.2rem;
@@ -26,7 +26,7 @@ export const SearchButton = styled.button`
   border-radius: 5px;
   cursor: pointer;
   transition: all 0.4s;
-  font-family: "Nougat", sans-serif;
+  font-family: "Lilita One", cursive;
   font-size: 1.2rem;
 
   &:active {
@@ -41,6 +41,6 @@ export const SearchButton = styled.button`
 export const SelectList = styled.select`
   padding: 0.5rem 1rem;
   border-radius: 5px;
-  font-family: "Nougat", sans-serif;
+  font-family: "Lilita One", cursive;
   font-size: 1.2rem;
 `;
