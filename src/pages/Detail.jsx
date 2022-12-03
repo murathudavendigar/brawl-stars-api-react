@@ -7,6 +7,7 @@ import { SearchButton } from "../styles/Header.styled";
 const Detail = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
+  console.log(state);
 
   return (
     <DetailMain
