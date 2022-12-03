@@ -67,7 +67,7 @@ Creating a simple web application to fetch data from the API and work with style
 ## Screenshot
 
 <p align="center">
-<a href="https://brawl-stars-api-react.vercel.app/"><img src="https://media-exp1.licdn.com/dms/image/C4D22AQG1TNPkPVWNhw/feedshare-shrink_800/0/1669823576628?e=1672876800&v=beta&t=cz18JaR2CbWLyrJxNrhtngnrFWLQa6NljboAZHVrdgM" alt="screenshot"></a>
+<a href="https://brawl-stars-api-react.vercel.app/"><img src="https://i.ibb.co/ZMnXCyD/brawl-stars-app.gif" alt="screenshot"></a>
 </p>
 
 ## Links
