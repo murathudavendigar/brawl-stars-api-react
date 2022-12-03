@@ -1,70 +1,115 @@
-# Getting Started with Create React App
+# Project : React Brawl Stars App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A web application that I prepared to work with React JS using the Brawl Stars API.
 
-## Available Scripts
+## Table of contents
 
-In the project directory, you can run:
+- [Project : React Brawl Stars App](#project--react-brawl-stars-app)
+  - [Table of contents](#table-of-contents)
+  - [The challenge](#the-challenge)
+  - [Project Skeleton](#project-skeleton)
+  - [Screenshot](#screenshot)
+  - [Links](#links)
+    - [Built with](#built-with)
+    - [Useful resources](#useful-resources)
+  - [Installation](#installation)
+  - [Author](#author)
+  - [Contact](#contact)
 
-### `npm start`
+## The challenge
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Creating a simple web application to fetch data from the API and work with styled components and React.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Project Skeleton
 
-### `npm test`
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+|----README.md
+├── public
+│     └── index.html
+├── src
+│    ├── assets
+│    │       └── [images]
+│    ├── auth
+│    │       └──firebase.js
+│    ├── components
+│    │       ├── Cards.jsx
+│    │       ├── Header.jsx
+│    │       ├── Navbar.jsx
+│    │       └── ScrollButton.jsx
+│    ├── pages
+│    │       ├── About.jsx
+│    │       ├── Detail.jsx
+│    │       ├── Events.jsx
+│    │       └──Home.jsx
+|    ├── router
+│    │       └── AppRouter.jsx
+│    ├── styles
+│    │       ├── About.styled.jsx
+│    │       ├── Card.styled.jsx
+│    │       ├── Detail.styled.jsx
+│    │       ├── Events.styled.jsx
+│    │       ├── Flex.styled.jsx
+│    │       ├── GlobalStyles.jsx
+│    │       ├── Header.styled.jsx
+│    │       ├── Home.styled.jsx
+│    │       ├── Navbar.styled.jsx
+│    │       └──UpButton.styled.jsx
+│    ├── App.js
+│    ├── App.css
+│    ├── index.js
+│    └── index.css
+├── package.json
+└── package-lock.json
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Screenshot
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+<p align="center">
+<a href="https://brawl-stars-api-react.vercel.app/"><img src="https://media-exp1.licdn.com/dms/image/C4D22AQG1TNPkPVWNhw/feedshare-shrink_800/0/1669823576628?e=1672876800&v=beta&t=cz18JaR2CbWLyrJxNrhtngnrFWLQa6NljboAZHVrdgM" alt="screenshot"></a>
+</p>
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Links
 
-### `npm run eject`
+<hr>
+<b>Check The Live Website ➡️</b> <a href="https://brawl-stars-api-react.vercel.app/">Live Website</a>
+<hr>
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Built with
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- React Components, States and Hooks
+- API GET request
+- Axios
+- React-Router
+- Styled-Components
+- JSX Elements
+- CSS custom properties
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Useful resources
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- [W3 Schools](https://www.w3schools.com/)
+- [MDN](https://developer.mozilla.org/en-US/)
 
-## Learn More
+## Installation
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Use the Npm package manager install command.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+npm install
+```
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Author
 
-### Analyzing the Bundle Size
+- Author - [Murat Hüdavendigâr]
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Contact
 
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+<p align="center">
+<a href="https://codepen.io/m_hudavendigar" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/codepen.svg" alt="m_hudavendigar" height="30" width="40" /></a>
+<a href="https://twitter.com/murathoncu" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/twitter.svg" alt="murathoncu" height="30" width="40" /></a>
+<a href="https://www.linkedin.com/in/murathudavendigaroncu/" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/linked-in-alt.svg" alt="murat-hüdavendigâr-öncü-232749246" height="30" width="40" /></a>
+<a href="https://instagram.com/m_hdavendigr" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/instagram.svg" alt="m_hdavendigr" height="30" width="40" /></a>
+</p>
