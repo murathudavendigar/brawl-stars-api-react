@@ -4,9 +4,9 @@ const ButtonEventsPage = styled.button`
   border: none;
   outline: none;
   background-color: transparent;
-  font-family: "Nougat", sans-serif;
   font-size: 2rem;
   font-weight: 600;
+  font-family: "Lilita One", cursive;
   color: ${({ color }) => (color ? "rgb(240,25,25)" : "rgb(145, 225, 54)")};
   transition: all 0.5s;
   &:hover {
