@@ -1,11 +1,23 @@
-import { useState } from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CardsInfo, { ButtonCard, CardMain } from "../styles/Card.styled";
 
 const Cards = ({ info, searchName, searchType }) => {
+  const [first, setFirst] = useState();
+  const [mapInfo, setMapInfo] = useState(info?.slice(0, 50));
   const navigate = useNavigate();
 
+  useEffect(() => {
+    setFirst(0);
+  }, []);
+
+  useEffect(() => {
+    setMapInfo(mapInfo?.concat(info?.slice(first, first + 10)));
+    setTimeout(() => {
+      setFirst(first + 10);
+    }, 5000);
+  }, [first]);
+  console.log(mapInfo);
   return (
     <>
       {searchType === "brawlers" && (
@@ -74,7 +86,7 @@ const Cards = ({ info, searchName, searchType }) => {
 
       {searchType === "maps" && (
         <CardMain wrap="wrap">
-          {info
+          {mapInfo
             ?.filter((x) =>
               x?.name.toLowerCase().includes(searchName.toLowerCase())
             )
