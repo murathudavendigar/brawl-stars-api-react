@@ -12,7 +12,7 @@ const About = () => {
   return (
     <>
       <Flex style={{ flexDirection: "column" }}>
-        <h1 style={{ color: "white" }}>Designed By: Captain Price</h1>
+        <h1 style={{ color: "white" }}>Designed By: John Price</h1>
 
         <SocialDiv>
           <FaTwitter
