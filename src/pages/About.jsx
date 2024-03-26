@@ -29,7 +29,7 @@ const About = () => {
             onMouseOver={({ target }) => (target.style.color = "white")}
             onMouseOut={({ target }) => (target.style.color = "black")}
             onClick={() =>
-              (window.location.href = "https://www.instagram.com/m_hdavendigr/")
+              (window.location.href = "https://www.instagram.com/mhdvoncu/")
             }
           />
           <FaLinkedinIn
