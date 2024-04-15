@@ -21,6 +21,7 @@ export const NavbarMenuLink = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
   gap: 2rem;
   padding: 2rem;
   @media (max-width: 768px) {
