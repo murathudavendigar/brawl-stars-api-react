@@ -8,7 +8,7 @@ import BrawlerTable from "../components/BrawlerTable";
 const Stats = () => {
   const [playerTag, setPlayerTag] = useState("Q0UVU80RR");
   const [playerInfo, setPlayerInfo] = useState([]);
-  const baseURL = `https://api.brawlstars.com/v1`;
+  const baseURL = `https://bsproxy.royaleapi.dev/v1`;
   const playerURL = `${baseURL}/players/%23${playerTag}`;
   const iconURL = "https://cdn-old.brawlify.com/profile";
   // const brawlerURL = `${baseURL}/brawlers`;
