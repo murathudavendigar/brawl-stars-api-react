@@ -16,7 +16,8 @@ const Stats = () => {
   const headers = {
     Authorization: `Bearer ${TOKEN}`,
     Accept: "application/json",
-    "Content-Type": "application/json;charset=UTF-8",
+    "Cache-Control": "max-age=600", // cache-control başlığını ekleyin
+    "Content-Type": "application/json; charset=utf-8",
   };
   const getPlayerInfo = async () => {
     try {
