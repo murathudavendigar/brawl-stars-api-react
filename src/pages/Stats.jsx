@@ -8,13 +8,15 @@ import BrawlerTable from "../components/BrawlerTable";
 const Stats = () => {
   const [playerTag, setPlayerTag] = useState("Q0UVU80RR");
   const [playerInfo, setPlayerInfo] = useState([]);
-  const baseURL = `https://bsproxy.royaleapi.dev/v1`;
+  const baseURL = `https://api.brawlstars.com/v1`;
   const playerURL = `${baseURL}/players/%23${playerTag}`;
   const iconURL = "https://cdn-old.brawlify.com/profile";
   // const brawlerURL = `${baseURL}/brawlers`;
   const TOKEN = config.TOKEN;
   const headers = {
     Authorization: `Bearer ${TOKEN}`,
+    Accept: "application/json",
+    "Content-Type": "application/json;charset=UTF-8",
   };
   const getPlayerInfo = async () => {
     try {
