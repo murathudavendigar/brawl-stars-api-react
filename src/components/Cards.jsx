@@ -64,12 +64,11 @@ const Cards = ({ info, searchName, searchType }) => {
                   key={index}
                   justify="baseline"
                   style={{ backgroundColor: `${item?.bgColor}` }}>
-                  <h2>{item.name}</h2>
+                  <h2 style={{textAlign:'center' , marginBottom: '0.5rem'}}>{item.name}</h2>
                   <img
                     src={item.imageUrl}
                     alt=""
-                    width="150px"
-                    style={{ marginBottom: "1rem" }}
+                    style={{ marginBottom: "1rem", width:'90px' }}
                   />
                   <p>{item.description}</p>
                   {searchType === "brawlers" && (
