@@ -1,18 +1,19 @@
-import React, { useState } from "react";
-import { FaArrowCircleUp } from "react-icons/fa";
+import { useCallback, useEffect, useState } from "react";
+import { FaArrowUp } from "react-icons/fa";
 import { Button } from "../styles/UpButton.styled";
 
 const ScrollButton = () => {
   const [visible, setVisible] = useState(false);
 
-  const toggleVisible = () => {
+  const toggleVisible = useCallback(() => {
     const scrolled = document.documentElement.scrollTop;
-    if (scrolled > 300) {
-      setVisible(true);
-    } else if (scrolled <= 300) {
-      setVisible(false);
-    }
-  };
+    setVisible(scrolled > 300);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener("scroll", toggleVisible);
+    return () => window.removeEventListener("scroll", toggleVisible);
+  }, [toggleVisible]);
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -21,14 +22,11 @@ const ScrollButton = () => {
     });
   };
 
-  window.addEventListener("scroll", toggleVisible);
+  if (!visible) return null;
 
   return (
-    <Button>
-      <FaArrowCircleUp
-        onClick={scrollToTop}
-        style={{ display: visible ? "inline" : "none" }}
-      />
+    <Button onClick={scrollToTop} aria-label="Scroll to top">
+      <FaArrowUp />
     </Button>
   );
 };

@@ -1,22 +1,24 @@
-import React from "react";
+import NavbarLogoImg from "../assets/Brawl_Stars_logo_2025.svg";
+import { NAV_LINKS } from "../lib/config";
 import Nav, {
   NavbarLink,
   NavbarLogo,
+  NavbarLogoLink,
   NavbarMenuLink,
 } from "../styles/Navbar.styled";
-import NavbarLogoImg from "../assets/Brawl_Stars_logo.png";
 
 const Navbar = () => {
   return (
     <Nav>
-      <NavbarLink to="/">
+      <NavbarLogoLink to="/">
         <NavbarLogo src={NavbarLogoImg} />
-      </NavbarLink>
+      </NavbarLogoLink>
       <NavbarMenuLink>
-        <NavbarLink to="/">Home</NavbarLink>
-        <NavbarLink to="events">Events</NavbarLink>
-        <NavbarLink to="about">About</NavbarLink>
-        {/* <NavbarLink to="stats">Show My Stats</NavbarLink> */}
+        {NAV_LINKS.map((link) => (
+          <NavbarLink key={link.path} to={link.path} end={link.path === "/"}>
+            {link.label}
+          </NavbarLink>
+        ))}
       </NavbarMenuLink>
     </Nav>
   );

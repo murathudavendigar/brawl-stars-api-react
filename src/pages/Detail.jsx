@@ -1,79 +1,153 @@
-import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import DetailMain from "../styles/Detail.styled";
-import Flex from "../styles/Flex.styled";
-import { SearchButton } from "../styles/Header.styled";
+import SEO from "../components/common/SEO";
+import DetailMain, {
+  AbilitiesGrid,
+  AbilityCard,
+  AbilityDescription,
+  AbilityHeader,
+  AbilityType,
+  BackButton,
+  BrawlerImageContainer,
+  BrawlerName,
+  DescriptionCard,
+  DetailImage,
+  HeroSection,
+  RarityBadge,
+  SectionTitle,
+  StatCard,
+  StatsContainer,
+} from "../styles/Detail.styled";
+
+const RARITY_COLORS = {
+  Common: "#b9eaff",
+  Rare: "#68fd58",
+  "Super Rare": "#5ab3ff",
+  Epic: "#d850ff",
+  Mythic: "#fe5e72",
+  Legendary: "#fff11e",
+  Chromatic: "#f88f25",
+};
 
 const Detail = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
 
+  if (!state) {
+    return (
+      <>
+        <SEO title="Not Found" />
+        <DetailMain>
+          <HeroSection>
+            <BrawlerName>Content Not Found</BrawlerName>
+            <DescriptionCard>
+              <p>Please navigate from the home page to view details.</p>
+            </DescriptionCard>
+          </HeroSection>
+          <BackButton onClick={() => navigate("/")}>🏠 GO HOME</BackButton>
+        </DetailMain>
+      </>
+    );
+  }
+
+  const rarityName = state?.rarity?.name || "Common";
+  const rarityColor = RARITY_COLORS[rarityName] || "#ff4757";
+
   return (
-    <DetailMain
-      style={{
-        backgroundImage: `linear-gradient(0deg, ${state?.rarity?.color}, rgb(33, 134, 255,0.01))`,
-      }}>
-      <div style={{ marginBottom: "1rem", textAlign: "center" }}>
-        <h1>
-          <img src={state.imageUrl3} alt="" width="40px" /> {state.name}{" "}
-          <img src={state.imageUrl3} alt="" width="40px" />
-        </h1>
-        <h4 style={{ marginTop: "0.5rem" }}>
-          <em>
-            {state?.class?.name} / {state?.rarity?.name}
-          </em>
-        </h4>
-      </div>
-      <img src={state.imageUrl} alt="" width="150px" />
+    <>
+      <SEO
+        title={state.name}
+        description={state.description}
+        image={state.imageUrl}
+        keywords={`Brawl Stars, ${state.name}, ${
+          state?.class?.name || ""
+        }, ${rarityName}`}
+      />
+      <DetailMain>
+        <HeroSection>
+          <BrawlerName>
+            <img src={state.imageUrl3} alt="" width="45" />
+            {state.name}
+            <img src={state.imageUrl3} alt="" width="45" />
+          </BrawlerName>
 
-      <h4 style={{ margin: "1rem 0" }}>{state.description}</h4>
-      {state?.gadgets.length > 0 && <h2>Gadgets</h2>}
-      <Flex
-        style={{ flexDirection: "column", marginBottom: "1rem" }}
-        align="start">
-        {state?.gadgets.map((item, index) => {
-          return (
-            <div
-              key={index}
-              style={{ borderBottom: "1px solid black", width: "100%" }}>
-              <Flex
-                justify="flex-start"
-                style={{ margin: "0.6rem 0", gap: "1rem" }}>
-                <img src={item?.imageUrl} alt="" width="30px" />
-                <h4>-- {item?.name}</h4>
-              </Flex>
-              <p>{item?.description}</p>
+          <RarityBadge $color={rarityColor}>
+            {state?.class?.name && <span>⚔️ {state.class.name}</span>}
+            <span style={{ opacity: 0.5 }}>|</span>
+            <span>💎 {rarityName}</span>
+          </RarityBadge>
 
-              <hr />
-            </div>
-          );
-        })}
-      </Flex>
+          <BrawlerImageContainer $color={rarityColor}>
+            <DetailImage src={state.imageUrl} alt={state.name} />
+          </BrawlerImageContainer>
 
-      {state?.starPowers.length > 0 && <h2>Star Powers</h2>}
-      <Flex style={{ flexDirection: "column" }} align="start">
-        {state?.starPowers.map((item, index) => {
-          return (
-            <div
-              key={index}
-              style={{ borderBottom: "1px solid black", width: "100%" }}>
-              <Flex
-                justify="flex-start"
-                style={{ margin: "0.6rem 0", gap: "1rem" }}>
-                <img src={item?.imageUrl} alt="" width="30px" />
-                <h4>-- {item?.name}</h4>
-              </Flex>
-              <p>{item?.description}</p>
+          <StatsContainer>
+            {state?.gadgets && (
+              <StatCard>
+                <span className="stat-icon">⚡</span>
+                <span className="stat-value">{state.gadgets.length}</span>
+                <span className="stat-label">Gadgets</span>
+              </StatCard>
+            )}
+            {state?.starPowers && (
+              <StatCard>
+                <span className="stat-icon">⭐</span>
+                <span className="stat-value">{state.starPowers.length}</span>
+                <span className="stat-label">Star Powers</span>
+              </StatCard>
+            )}
+            <StatCard>
+              <span className="stat-icon">💎</span>
+              <span className="stat-value" style={{ color: rarityColor }}>
+                {rarityName}
+              </span>
+              <span className="stat-label">Rarity</span>
+            </StatCard>
+          </StatsContainer>
+        </HeroSection>
 
-              <hr />
-            </div>
-          );
-        })}
-      </Flex>
-      <SearchButton style={{ margin: "1rem" }} onClick={() => navigate(-1)}>
-        GO BACK
-      </SearchButton>
-    </DetailMain>
+        <DescriptionCard>
+          <p>{state.description}</p>
+        </DescriptionCard>
+
+        {state?.gadgets?.length > 0 && (
+          <>
+            <SectionTitle>⚡ Gadgets</SectionTitle>
+            <AbilitiesGrid>
+              {state.gadgets.map((item, index) => (
+                <AbilityCard key={item.id || index} $type="gadget">
+                  <AbilityType $type="gadget">Gadget</AbilityType>
+                  <AbilityHeader>
+                    <img src={item?.imageUrl} alt={item?.name} />
+                    <h4>{item?.name}</h4>
+                  </AbilityHeader>
+                  <AbilityDescription>{item?.description}</AbilityDescription>
+                </AbilityCard>
+              ))}
+            </AbilitiesGrid>
+          </>
+        )}
+
+        {state?.starPowers?.length > 0 && (
+          <>
+            <SectionTitle>⭐ Star Powers</SectionTitle>
+            <AbilitiesGrid>
+              {state.starPowers.map((item, index) => (
+                <AbilityCard key={item.id || index} $type="starpower">
+                  <AbilityType $type="starpower">Star Power</AbilityType>
+                  <AbilityHeader>
+                    <img src={item?.imageUrl} alt={item?.name} />
+                    <h4>{item?.name}</h4>
+                  </AbilityHeader>
+                  <AbilityDescription>{item?.description}</AbilityDescription>
+                </AbilityCard>
+              ))}
+            </AbilitiesGrid>
+          </>
+        )}
+
+        <BackButton onClick={() => navigate(-1)}>← GO BACK</BackButton>
+      </DetailMain>
+    </>
   );
 };
 
