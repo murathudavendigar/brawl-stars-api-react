@@ -241,7 +241,7 @@ export const DescriptionCard = styled.div`
   position: relative;
 
   &::before {
-    content: '"';
+    content: "";
     position: absolute;
     top: -5px;
     left: 15px;
