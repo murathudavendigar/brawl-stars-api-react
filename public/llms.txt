@@ -1,0 +1,14 @@
+# Brawl Stars API
+
+> A free React catalog for browsing Brawl Stars brawlers, maps, and game modes from BrawlAPI. Not affiliated with Supercell.
+
+## Pages
+- [Home](https://brawl-stars-api-react.vercel.app/): Filter, favorite, and compare brawlers, maps, and game modes.
+- [Events](https://brawl-stars-api-react.vercel.app/events): Available and retired maps. BrawlAPI does not publish a live rotation clock.
+- [About](https://brawl-stars-api-react.vercel.app/about): Project notes, data credits, and the developer.
+
+## Key facts
+- Catalog data comes from BrawlAPI (https://brawlapi.com).
+- Portraits and profile icons come from the Brawlify CDN (https://brawlify.com).
+- The app does not look up player tags or battle logs.
+- Built by Murat Hudavendigar Oncu (https://muratoncu.com).

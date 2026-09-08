@@ -2,8 +2,6 @@ import { createGlobalStyle } from "styled-components";
 import { cssVariables } from "./theme";
 
 const GlobalStyle = createGlobalStyle`
-  @import url('https://fonts.googleapis.com/css2?family=Lilita+One&family=Poppins:wght@300;400;500;600;700&display=swap');
-  
   ${cssVariables}
   
   * {
@@ -14,18 +12,20 @@ const GlobalStyle = createGlobalStyle`
 
   html {
     scroll-behavior: smooth;
+    background: var(--page-bg);
   }
 
   body {
-    font-family: var(--font-primary);
+    font-family: var(--font-secondary);
+    font-weight: 700;
     min-height: 100vh;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: var(--page-bg);
     background-attachment: fixed;
-    color: var(--color-white);
+    color: var(--color-text-body);
     overflow-x: hidden;
     position: relative;
     
-    /* Animated background pattern */
+    /* Warm gold dust — Starr Park night, not corporate blue orbs */
     &::before {
       content: '';
       position: fixed;
@@ -34,14 +34,14 @@ const GlobalStyle = createGlobalStyle`
       width: 100%;
       height: 100%;
       background-image: 
-        radial-gradient(circle at 20% 80%, rgba(240, 25, 25, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(33, 134, 255, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 40% 40%, rgba(145, 225, 54, 0.05) 0%, transparent 50%);
+        radial-gradient(circle at 18% 78%, var(--bg-orb-primary) 0%, transparent 46%),
+        radial-gradient(circle at 82% 18%, var(--bg-orb-accent) 0%, transparent 42%),
+        radial-gradient(circle at 50% 48%, var(--bg-orb-secondary) 0%, transparent 38%);
       pointer-events: none;
       z-index: -1;
     }
     
-    /* Animated particles effect */
+    /* Comic halftone + star sparkles (static; twinkle disabled when reduced-motion) */
     &::after {
       content: '';
       position: fixed;
@@ -49,47 +49,60 @@ const GlobalStyle = createGlobalStyle`
       left: 0;
       width: 100%;
       height: 100%;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 800 800'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='1' opacity='0.03'%3E%3Ccircle cx='400' cy='400' r='50'/%3E%3Ccircle cx='400' cy='400' r='100'/%3E%3Ccircle cx='400' cy='400' r='150'/%3E%3Ccircle cx='400' cy='400' r='200'/%3E%3Ccircle cx='400' cy='400' r='250'/%3E%3Ccircle cx='400' cy='400' r='300'/%3E%3Ccircle cx='400' cy='400' r='350'/%3E%3C/g%3E%3C/svg%3E");
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cpolygon points='24,10 26.2,16.2 33,16.2 27.6,20 29.6,26.4 24,22.4 18.4,26.4 20.4,20 15,16.2 21.8,16.2' fill='%23FFE35B' fill-opacity='0.38'/%3E%3Cpolygon points='118,92 119.4,96.2 124,96.2 120.4,98.8 121.8,103 118,100.2 114.2,103 115.6,98.8 112,96.2 116.6,96.2' fill='%23FFB921' fill-opacity='0.32'/%3E%3Ccircle cx='78' cy='36' r='1.3' fill='%23FFE35B' fill-opacity='0.55'/%3E%3Ccircle cx='142' cy='48' r='1.1' fill='%23FFFFFF' fill-opacity='0.4'/%3E%3Ccircle cx='40' cy='110' r='1' fill='%23FFB921' fill-opacity='0.45'/%3E%3Ccircle cx='96' cy='128' r='0.9' fill='%23FFFFFF' fill-opacity='0.28'/%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Ccircle cx='4' cy='4' r='1.15' fill='%23FFB921' fill-opacity='0.14'/%3E%3Ccircle cx='18' cy='16' r='0.85' fill='%23FFE35B' fill-opacity='0.1'/%3E%3C/svg%3E");
+      background-size: 160px 160px, 28px 28px;
       pointer-events: none;
       z-index: -1;
-      animation: bgFloat 20s ease-in-out infinite;
+      animation: starTwinkle 9s ease-in-out infinite;
     }
   }
 
-  @keyframes bgFloat {
-    0%, 100% {
-      transform: translateY(0) rotate(0deg);
-    }
-    50% {
-      transform: translateY(-20px) rotate(5deg);
-    }
+  @keyframes starTwinkle {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 0.85; }
   }
 
-  /* Custom scrollbar */
+  h1, h2, h3, h4, h5, h6,
+  button,
+  nav a {
+    font-family: var(--font-primary);
+  }
+
+  p, label, input, textarea, select, li, dd, dt {
+    font-family: var(--font-secondary);
+  }
+
+  select {
+    font-family: var(--font-primary);
+  }
+
+  /* Custom scrollbar — chunky gold/red */
   ::-webkit-scrollbar {
-    width: 10px;
+    width: 12px;
   }
 
   ::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--color-ink);
+    border-left: 3px solid var(--color-ink);
   }
 
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, var(--color-primary), var(--color-accent));
-    border-radius: 5px;
+    background: var(--color-gold);
+    border: 3px solid var(--color-ink);
+    border-radius: 8px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, var(--color-primary-hover), var(--color-accent));
+    background: var(--color-primary);
   }
 
-  /* Selection styling */
   ::selection {
     background: var(--color-primary);
-    color: white;
+    color: var(--color-white);
   }
 
-  /* Link styling */
   a {
     text-decoration: none;
     color: inherit;
@@ -97,15 +110,13 @@ const GlobalStyle = createGlobalStyle`
     cursor: pointer;
   }
 
-  /* Button reset */
   button {
-    font-family: inherit;
+    font-family: var(--font-primary);
     cursor: pointer;
     border: none;
     outline: none;
   }
 
-  /* All interactive elements should have pointer cursor */
   button,
   [role="button"],
   input[type="submit"],
@@ -116,29 +127,45 @@ const GlobalStyle = createGlobalStyle`
     cursor: pointer;
   }
 
-  /* Image optimization */
   img {
     max-width: 100%;
     height: auto;
     display: block;
   }
 
-  /* Focus styling for accessibility */
   :focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
+    outline: 3px solid var(--color-gold-light);
+    outline-offset: 3px;
   }
 
-  /* Utility classes */
+  /* Comic panel — overlays only may keep a whisper of blur */
   .glass {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: var(--panel-bg);
+    border: 3px solid var(--color-ink);
+    box-shadow: var(--shadow-3d);
+    border-radius: var(--radius-lg);
   }
 
   .glow-on-hover:hover {
-    box-shadow: 0 0 20px rgba(240, 25, 25, 0.5);
+    box-shadow: var(--shadow-3d-hover);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    body::before,
+    body::after {
+      animation: none !important;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
   }
 `;
 

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 /**
  * Custom hook for data fetching with loading and error states
@@ -7,32 +7,46 @@ import { useCallback, useEffect, useRef, useState } from "react";
  * @param {object} options - Optional axios config options
  * @returns {object} - { data, loading, error, refetch }
  */
-const useFetch = (url, options = {}) => {
+const useFetch = (url, options) => {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(Boolean(url));
   const [error, setError] = useState(null);
+  const requestOptions = useMemo(() => options || {}, [options]);
 
-  // Use ref to avoid options causing re-fetches
-  const optionsRef = useRef(options);
+  const fetchData = useCallback(
+    async (signal) => {
+      if (!url) {
+        setLoading(false);
+        return;
+      }
 
-  const fetchData = useCallback(async () => {
-    if (!url) return;
+      setLoading(true);
+      setError(null);
 
-    setLoading(true);
-    setError(null);
-
-    try {
-      const response = await axios(url, optionsRef.current);
-      setData(response.data);
-    } catch (err) {
-      setError(err.message || "An error occurred while fetching data");
-    } finally {
-      setLoading(false);
-    }
-  }, [url]);
+      try {
+        const response = await axios(url, { ...requestOptions, signal });
+        setData(response.data);
+      } catch (err) {
+        if (axios.isCancel(err) || err.name === "CanceledError") return;
+        setError(
+          err.response?.data?.message ||
+            err.message ||
+            "An error occurred while fetching data"
+        );
+      } finally {
+        if (!signal?.aborted) {
+          setLoading(false);
+        }
+      }
+    },
+    [requestOptions, url]
+  );
 
   useEffect(() => {
-    fetchData();
+    const controller = new AbortController();
+    fetchData(controller.signal);
+
+    return () => controller.abort();
   }, [fetchData]);
 
   const refetch = () => {

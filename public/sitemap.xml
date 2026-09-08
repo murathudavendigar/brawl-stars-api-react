@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://brawl-stars-api-react.vercel.app/</loc>
+  </url>
+  <url>
+    <loc>https://brawl-stars-api-react.vercel.app/events</loc>
+  </url>
+  <url>
+    <loc>https://brawl-stars-api-react.vercel.app/about</loc>
+  </url>
+</urlset>

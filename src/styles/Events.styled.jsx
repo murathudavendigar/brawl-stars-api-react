@@ -1,62 +1,98 @@
 import styled from "styled-components";
 
+export const EventNotice = styled.p`
+  width: min(100%, 720px);
+  margin: 0 auto 1.25rem;
+  padding: 0.95rem 1.15rem;
+  text-align: center;
+  color: var(--color-text-body);
+  background: var(--panel-bg);
+  border: 3px solid var(--color-ink);
+  border-radius: 14px;
+  box-shadow: var(--shadow-3d);
+  font-family: var(--font-secondary);
+  font-size: 0.95rem;
+  font-weight: 700;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 2px solid var(--color-gold);
+    border-radius: 8px;
+    pointer-events: none;
+    opacity: 0.4;
+  }
+`;
+
+export const EventTabs = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+`;
+
+export const CountdownBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 0.3rem 0.7rem;
+  margin: 0.4rem 0;
+  border-radius: 10px;
+  background: var(--color-ink);
+  color: var(--color-gold-light);
+  border: 3px solid var(--color-ink);
+  box-shadow: 0 3px 0 #1a1020;
+  font-family: var(--font-primary);
+  font-size: 0.85rem;
+  font-weight: 400;
+`;
+
 const ButtonEventsPage = styled.button`
-  border: none;
   outline: none;
   background: ${({ $isActive }) =>
-    $isActive
-      ? "linear-gradient(135deg, rgba(240, 25, 25, 0.2), rgba(240, 25, 25, 0.1))"
-      : "linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02))"};
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  padding: 1rem 2.5rem;
-  border-radius: 30px;
-  font-size: 1.3rem;
-  font-weight: 600;
+    $isActive ? "var(--color-primary)" : "var(--panel-bg)"};
+  padding: 0.75rem 1.8rem;
+  border-radius: 14px;
+  font-size: 1.25rem;
   font-family: var(--font-primary);
   color: ${({ $isActive }) =>
-    $isActive ? "#ff4757" : "rgba(255, 255, 255, 0.6)"};
-  border: 2px solid
-    ${({ $isActive }) =>
-      $isActive ? "rgba(240, 25, 25, 0.5)" : "rgba(255, 255, 255, 0.15)"};
+    $isActive ? "var(--color-white)" : "var(--color-gold-light)"};
+  border: 3px solid var(--color-ink);
+  box-shadow: var(--shadow-3d);
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease,
+    color 0.12s ease;
   position: relative;
   overflow: hidden;
 
   &::before {
     content: "";
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: ${({ $isActive }) =>
-      $isActive
-        ? "linear-gradient(135deg, rgba(240, 25, 25, 0.2), rgba(240, 25, 25, 0.1))"
-        : "linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05))"};
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    top: 3px;
+    left: 12px;
+    right: 12px;
+    height: 38%;
+    background: rgba(255, 255, 255, 0.22);
+    border-radius: 10px 10px 40% 40%;
     pointer-events: none;
   }
 
   &:hover {
-    transform: translateY(-3px) scale(1.02);
-    color: ${({ $isActive }) => ($isActive ? "#ff4757" : "#ffffff")};
-    border-color: ${({ $isActive }) =>
-      $isActive ? "#f01919" : "rgba(255, 255, 255, 0.3)"};
-    box-shadow: ${({ $isActive }) =>
-      $isActive
-        ? "0 10px 30px rgba(240, 25, 25, 0.3)"
-        : "0 10px 30px rgba(255, 255, 255, 0.1)"};
-
-    &::before {
-      opacity: 1;
-    }
+    transform: translateY(-2px);
+    color: ${({ $isActive }) =>
+      $isActive ? "var(--color-white)" : "var(--color-ink)"};
+    background: ${({ $isActive }) =>
+      $isActive ? "var(--color-primary)" : "var(--color-gold)"};
+    box-shadow: var(--shadow-3d-hover);
   }
 
   &:active {
-    transform: translateY(0) scale(0.98);
+    transform: translateY(2px);
+    box-shadow: var(--shadow-3d-pressed);
   }
 `;
 

@@ -1,0 +1,17 @@
+{
+  "short_name": "Brawl API",
+  "name": "Brawl Stars API Explorer",
+  "description": "Explore Brawl Stars brawlers, maps, game modes, and events.",
+  "icons": [
+    {
+      "src": "star-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#F01919",
+  "background_color": "#14122B"
+}

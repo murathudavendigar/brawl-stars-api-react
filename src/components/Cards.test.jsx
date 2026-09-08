@@ -12,7 +12,13 @@ jest.mock('react-router-dom', () => ({
 
 // Mock LazyImage
 jest.mock('./common/LazyImage', () => {
-  const LazyImage = ({ src, alt, ...props }) => <img src={src} alt={alt} {...props} />;
+  const LazyImage = ({
+    src,
+    alt,
+    fallbackSrc: _fallbackSrc,
+    missingLabel: _missingLabel,
+    ...props
+  }) => <img src={src} alt={alt} {...props} />;
   return LazyImage;
 });
 
@@ -47,7 +53,7 @@ describe('Cards', () => {
       render(<Cards info={brawlers} searchName="" searchType="brawlers" />);
       const viewDetailsButtons = screen.getAllByText('View Details');
       fireEvent.click(viewDetailsButtons[0]);
-      expect(mockedNavigate).toHaveBeenCalledWith('detail', { state: brawlers[0] });
+      expect(mockedNavigate).toHaveBeenCalledWith('/brawlers/1', { state: brawlers[0] });
     });
   });
 
@@ -67,6 +73,13 @@ describe('Cards', () => {
       render(<Cards info={gamemodes} searchName="Gamemode 1" searchType="gamemodes" />);
       expect(screen.getByText('Gamemode 1')).toBeInTheDocument();
       expect(screen.queryByText('Gamemode 2')).not.toBeInTheDocument();
+    });
+
+    it('should call navigate when "View Details" is clicked', () => {
+      render(<Cards info={gamemodes} searchName="" searchType="gamemodes" />);
+      const viewDetailsButtons = screen.getAllByText('View Details');
+      fireEvent.click(viewDetailsButtons[0]);
+      expect(mockedNavigate).toHaveBeenCalledWith('/gamemodes/1', { state: gamemodes[0] });
     });
   });
 
@@ -105,12 +118,12 @@ describe('Cards', () => {
   describe('edge cases', () => {
     it('should render an empty container when info is null', () => {
       render(<Cards info={null} searchName="" searchType="brawlers" />);
-      expect(screen.queryByRole('heading')).not.toBeInTheDocument();
+      expect(screen.getByText('No results found')).toBeInTheDocument();
     });
 
     it('should render an empty container when info is an empty array', () => {
       render(<Cards info={[]} searchName="" searchType="brawlers" />);
-      expect(screen.queryByRole('heading')).not.toBeInTheDocument();
+      expect(screen.getByText('No results found')).toBeInTheDocument();
     });
 
     it('should display no results if searchName does not match', () => {

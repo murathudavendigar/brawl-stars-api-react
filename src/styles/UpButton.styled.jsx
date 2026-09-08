@@ -1,10 +1,12 @@
 import styled from "styled-components";
-import { fadeInUp, float } from "./animations";
+import { fadeInUp } from "./animations";
 
 export const Heading = styled.h1`
   text-align: center;
-  color: white;
-  animation: ${float} 4s ease-in-out infinite;
+  color: var(--color-gold);
+  text-shadow:
+    3px 3px 0 var(--color-ink),
+    -1px -1px 0 var(--color-ink);
 `;
 
 export const Content = styled.div`
@@ -16,42 +18,46 @@ export const Button = styled.div`
   position: fixed;
   right: 30px;
   bottom: 40px;
-  width: 50px;
-  height: 50px;
+  width: 52px;
+  height: 52px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #f01919, #ff4757);
-  border-radius: 50%;
+  background: var(--color-primary);
+  border: 3px solid var(--color-ink);
+  border-radius: 14px;
+  box-shadow: var(--shadow-3d);
   cursor: pointer;
   z-index: 100;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 5px 20px rgba(240, 25, 25, 0.4);
-  animation: ${fadeInUp} 0.4s ease-out;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+  animation: ${fadeInUp} 0.3s ease-out;
 
   svg {
     font-size: 1.5rem;
-    color: white;
-    transition: transform 0.3s ease;
+    color: var(--color-white);
+    transition: transform 0.12s ease;
   }
 
   &:hover {
-    transform: translateY(-5px) scale(1.1);
-    box-shadow: 0 10px 30px rgba(240, 25, 25, 0.5);
+    background: var(--color-gold);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-3d-hover);
 
     svg {
+      color: var(--color-ink);
       transform: translateY(-2px);
     }
   }
 
   &:active {
-    transform: translateY(0) scale(0.95);
+    transform: translateY(2px);
+    box-shadow: var(--shadow-3d-pressed);
   }
 
   @media (max-width: 768px) {
     right: 20px;
     bottom: 30px;
-    width: 45px;
-    height: 45px;
+    width: 46px;
+    height: 46px;
   }
 `;

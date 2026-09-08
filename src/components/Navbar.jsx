@@ -5,9 +5,10 @@ import Nav, {
   NavbarLogo,
   NavbarLogoLink,
   NavbarMenuLink,
+  ThemeToggle,
 } from "../styles/Navbar.styled";
 
-const Navbar = () => {
+const Navbar = ({ themeMode, onThemeToggle }) => {
   return (
     <Nav>
       <NavbarLogoLink to="/">
@@ -19,6 +20,9 @@ const Navbar = () => {
             {link.label}
           </NavbarLink>
         ))}
+        <ThemeToggle type="button" onClick={onThemeToggle}>
+          {themeMode}
+        </ThemeToggle>
       </NavbarMenuLink>
     </Nav>
   );

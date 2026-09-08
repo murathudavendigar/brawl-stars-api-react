@@ -1,11 +1,38 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import CardsInfo, { ButtonCard, CardMain } from "../styles/Card.styled";
+import styled from "styled-components";
+import CardsInfo, {
+  ButtonCard,
+  CardActionRow,
+  CardText,
+  CardTitle,
+  CardMain,
+  EmptyState,
+  IconActionButton,
+} from "../styles/Card.styled";
+import { ClassBadge } from "../styles/Detail.styled";
 import LazyImage from "./common/LazyImage";
 
 const ITEMS_PER_PAGE = 20;
 
-const Cards = ({ info, searchName, searchType }) => {
+const SpacedLazyImage = styled(LazyImage)`
+  margin-bottom: 1rem;
+`;
+
+const ClickableCard = styled(CardsInfo)`
+  cursor: pointer;
+`;
+
+const Cards = ({
+  info,
+  searchName,
+  searchType,
+  viewMode = "grid",
+  isFavorite = () => false,
+  toggleFavorite = () => {},
+  selectedCompareIds = [],
+  onToggleCompare = () => {},
+}) => {
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const navigate = useNavigate();
 
@@ -33,26 +60,67 @@ const Cards = ({ info, searchName, searchType }) => {
   }, []);
 
   const hasMore = visibleCount < filteredItems.length;
+  const isCompact = viewMode === "compact";
+
+  if (!filteredItems.length) {
+    return (
+      <EmptyState role="status">
+        <h3>No results found</h3>
+        <p>Try another name or switch the content type.</p>
+      </EmptyState>
+    );
+  }
 
   return (
     <>
       {searchType === "brawlers" && (
-        <CardMain wrap="wrap" style={{ overflowY: "hidden" }}>
+        <CardMain wrap="wrap" $overflowY="hidden">
           {filteredItems.map((item, index) => (
             <CardsInfo
               key={item.id || index}
               justify="baseline"
-              style={{ backgroundColor: `${item?.bgColor}` }}>
+              $background={item?.bgColor || item?.rarity?.color}
+              $compact={isCompact}>
+              <CardActionRow>
+                <IconActionButton
+                  type="button"
+                  aria-label={
+                    isFavorite(searchType, item.id)
+                      ? `Remove ${item.name} from favorites`
+                      : `Add ${item.name} to favorites`
+                  }
+                  $active={isFavorite(searchType, item.id)}
+                  onClick={() => toggleFavorite(searchType, item.id)}>
+                  ★
+                </IconActionButton>
+                <IconActionButton
+                  type="button"
+                  aria-label={`Compare ${item.name}`}
+                  $active={selectedCompareIds.includes(item.id)}
+                  onClick={() => onToggleCompare(item)}>
+                  ⇄
+                </IconActionButton>
+              </CardActionRow>
               <h2>{item.name}</h2>
-              <LazyImage
+              {item.className && (
+                <ClassBadge $color={item?.rarity?.color}>
+                  {item.className}
+                </ClassBadge>
+              )}
+              <SpacedLazyImage
                 src={item.imageUrl}
+                fallbackSrc={[item.imageUrl2, item.iconUrl]}
                 alt={`${item.name} brawler`}
                 width="150px"
                 height="150px"
-                style={{ marginBottom: "1rem" }}
+                missingLabel="NEW"
               />
               <p>{item.description}</p>
-              <ButtonCard onClick={() => navigate("detail", { state: item })}>
+              {!item.released && (
+                <CardText $spaced>Unreleased</CardText>
+              )}
+              <ButtonCard
+                onClick={() => navigate(`/brawlers/${item.id}`, { state: item })}>
                 View Details
               </ButtonCard>
             </CardsInfo>
@@ -61,24 +129,49 @@ const Cards = ({ info, searchName, searchType }) => {
       )}
 
       {searchType === "gamemodes" && (
-        <CardMain wrap="wrap" style={{ overflowY: "scroll" }}>
+        <CardMain wrap="wrap" $overflowY="auto">
           {filteredItems.map((item, index) => (
-            <CardsInfo
+            <ClickableCard
               key={item.id || index}
               justify="baseline"
-              style={{ backgroundColor: `${item?.bgColor}` }}>
-              <h2 style={{ textAlign: "center", marginBottom: "0.5rem" }}>
-                {item.name}
-              </h2>
-              <LazyImage
+              $background={item?.bgColor}
+              $compact={isCompact}
+              onClick={() =>
+                navigate(`/gamemodes/${item.id}`, { state: item })
+              }>
+              <CardActionRow>
+                <IconActionButton
+                  type="button"
+                  aria-label={
+                    isFavorite(searchType, item.id)
+                      ? `Remove ${item.name} from favorites`
+                      : `Add ${item.name} to favorites`
+                  }
+                  $active={isFavorite(searchType, item.id)}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    toggleFavorite(searchType, item.id);
+                  }}>
+                  ★
+                </IconActionButton>
+              </CardActionRow>
+              <CardTitle $compact>{item.name}</CardTitle>
+              <SpacedLazyImage
                 src={item.imageUrl}
+                fallbackSrc={item.imageUrl2}
                 alt={`${item.name} game mode`}
                 width="90px"
                 height="90px"
-                style={{ marginBottom: "1rem" }}
               />
               <p>{item.description}</p>
-            </CardsInfo>
+              <ButtonCard
+                onClick={(event) => {
+                  event.stopPropagation();
+                  navigate(`/gamemodes/${item.id}`, { state: item });
+                }}>
+                View Details
+              </ButtonCard>
+            </ClickableCard>
           ))}
         </CardMain>
       )}
@@ -89,29 +182,39 @@ const Cards = ({ info, searchName, searchType }) => {
             <CardsInfo
               key={item.id || index}
               justify="baseline"
-              style={{
-                backgroundColor: `${item?.gameMode?.color}`,
-                gap: "0.75rem",
-              }}>
-              <h2 style={{ textAlign: "center" }}>{item?.name}</h2>
+              $background={item?.gameMode?.color}
+              $gap="0.75rem"
+              $compact={isCompact}>
+              <CardActionRow>
+                <IconActionButton
+                  type="button"
+                  aria-label={
+                    isFavorite(searchType, item.id)
+                      ? `Remove ${item.name} from favorites`
+                      : `Add ${item.name} to favorites`
+                  }
+                  $active={isFavorite(searchType, item.id)}
+                  onClick={() => toggleFavorite(searchType, item.id)}>
+                  ★
+                </IconActionButton>
+              </CardActionRow>
+              <CardTitle>{item?.name}</CardTitle>
               <LazyImage
                 src={item?.gameMode?.imageUrl}
                 alt={`${item?.gameMode?.name} icon`}
                 width="50px"
                 height="50px"
               />
-              <p style={{ textAlign: "center" }}>-{item?.gameMode?.name}-</p>
+              <CardText>-{item?.gameMode?.name}-</CardText>
               <LazyImage
                 src={item?.imageUrl}
                 alt={`${item?.name} map`}
                 width="150px"
                 height="150px"
               />
-              <p>{item?.description}</p>
+              {item?.description && <p>{item.description}</p>}
               <ButtonCard
-                onClick={() =>
-                  window.open(item?.link, "_blank", "noopener,noreferrer")
-                }>
+                onClick={() => navigate(`/maps/${item.id}`, { state: item })}>
                 View Details
               </ButtonCard>
             </CardsInfo>
@@ -119,7 +222,7 @@ const Cards = ({ info, searchName, searchType }) => {
           {hasMore && (
             <ButtonCard
               onClick={loadMore}
-              style={{ margin: "1rem auto", position: "static" }}>
+              $static>
               Load More Maps
             </ButtonCard>
           )}
