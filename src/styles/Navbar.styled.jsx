@@ -6,6 +6,7 @@ const Nav = styled.nav`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1rem;
   padding: 0.65rem 1.25rem;
   position: sticky;
   top: 0;
@@ -14,12 +15,6 @@ const Nav = styled.nav`
   border-bottom: 3px solid var(--color-ink);
   box-shadow: var(--shadow-3d);
   animation: ${fadeInDown} 0.4s ease-out;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    padding: 0.75rem;
-    gap: 0.65rem;
-  }
 `;
 
 export default Nav;
@@ -36,21 +31,75 @@ export const NavbarLogo = styled.img`
   }
 
   @media (max-width: 768px) {
-    width: 140px;
+    width: 132px;
+  }
+`;
+
+export const NavbarBrandRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+`;
+
+export const MenuToggle = styled.button`
+  display: none;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--color-gold);
+  border: 3px solid var(--color-ink);
+  box-shadow: var(--shadow-3d);
+  color: var(--color-ink);
+  font-family: var(--font-primary);
+  font-size: 1.25rem;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-3d-hover);
+  }
+
+  &:active {
+    transform: translateY(2px);
+    box-shadow: var(--shadow-3d-pressed);
+  }
+
+  @media (max-width: 768px) {
+    display: grid;
   }
 `;
 
 export const NavbarMenuLink = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   flex-wrap: wrap;
   gap: 0.5rem;
 
+  @media (min-width: 769px) {
+    display: flex !important;
+    position: static;
+    flex-direction: row;
+    padding: 0;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+  }
+
   @media (max-width: 768px) {
-    width: 100%;
-    justify-content: center;
-    padding: 0.25rem 0;
+    display: ${({ $open }) => ($open ? "flex" : "none")};
+    position: absolute;
+    top: calc(100% + 3px);
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0.85rem;
+    background: var(--nav-bg);
+    border-bottom: 3px solid var(--color-ink);
+    box-shadow: var(--shadow-3d);
   }
 `;
 
@@ -90,6 +139,7 @@ export const NavbarLink = styled(NavLink)`
   box-shadow: var(--shadow-3d);
   transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease,
     color 0.12s ease;
+  text-align: center;
 
   &:hover:not(.active) {
     color: var(--color-ink);
@@ -114,8 +164,9 @@ export const NavbarLink = styled(NavLink)`
   }
 
   @media (max-width: 768px) {
-    font-size: 1rem;
-    padding: 0.4rem 0.85rem;
+    font-size: 1.05rem;
+    padding: 0.65rem 1rem;
+    border-radius: 14px;
   }
 `;
 
@@ -128,7 +179,6 @@ export const ThemeToggle = styled.button`
   color: var(--color-ink);
   font-family: var(--font-primary);
   font-size: 0.95rem;
-  text-transform: capitalize;
   transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
 
   &:hover {
@@ -140,5 +190,44 @@ export const ThemeToggle = styled.button`
   &:active {
     transform: translateY(2px);
     box-shadow: var(--shadow-3d-pressed);
+  }
+
+  @media (max-width: 768px) {
+    border-radius: 14px;
+    width: 100%;
+  }
+`;
+
+export const FavoritesChip = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0.95rem;
+  border-radius: 999px;
+  background: var(--panel-bg);
+  border: 3px solid var(--color-ink);
+  box-shadow: var(--shadow-3d);
+  color: var(--color-gold-light);
+  font-family: var(--font-primary);
+  font-size: 0.95rem;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease,
+    color 0.12s ease;
+
+  &:hover {
+    background: var(--color-gold);
+    color: var(--color-ink);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-3d-hover);
+  }
+
+  &:active {
+    transform: translateY(2px);
+    box-shadow: var(--shadow-3d-pressed);
+  }
+
+  @media (max-width: 768px) {
+    border-radius: 14px;
+    width: 100%;
   }
 `;

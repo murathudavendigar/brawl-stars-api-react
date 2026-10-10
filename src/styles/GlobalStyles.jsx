@@ -138,6 +138,15 @@ const GlobalStyle = createGlobalStyle`
     outline-offset: 3px;
   }
 
+  [role="link"]:focus-visible,
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible {
+    outline: 3px solid var(--color-gold-light);
+    outline-offset: 3px;
+  }
+
   /* Comic panel — overlays only may keep a whisper of blur */
   .glass {
     background: var(--panel-bg);

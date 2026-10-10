@@ -6,8 +6,10 @@ import {
   FaLinkedinIn,
   FaTwitter,
 } from "react-icons/fa";
+import NavbarLogoImg from "../assets/Brawl_Stars_logo_2025.svg";
 import SEO from "../components/common/SEO";
 import { APP_INFO, DATA_SOURCES, DEVELOPER } from "../lib/config";
+import { PRODUCT_TIP } from "../lib/copy";
 import {
   AboutContainer,
   Bio,
@@ -32,6 +34,7 @@ import {
   Title,
   VersionBadge,
 } from "../styles/About.styled";
+import { BrandMark, CatalogLead, HeaderText } from "../styles/Home.styled";
 
 const About = () => {
   const { SOCIAL_LINKS, NAME, TITLE, BIO, PORTFOLIO, SKILLS } = DEVELOPER;
@@ -80,56 +83,39 @@ const About = () => {
     <>
       <SEO
         title="About"
-        description={`About ${NAME} — ${TITLE}. ${APP_INFO.DESCRIPTION}`}
-        keywords="developer, frontend, React, portfolio, Brawl Stars, BrawlAPI"
-        pageType="ProfilePage"
+        description={`${APP_INFO.NAME} — ${APP_INFO.DESCRIPTION}`}
+        keywords="Brawl Stars, BrawlAPI, catalog, React, Starr Park"
+        pageType="AboutPage"
         breadcrumbs={[
           { name: "Home", path: "/" },
           { name: "About", path: "/about" },
         ]}
       />
       <AboutContainer>
-        {/* Hero Section */}
-        <HeroSection>
-          <ProfileImageWrapper>
-            <ProfileImage>👨‍💻</ProfileImage>
-          </ProfileImageWrapper>
-          <ProfileInfo>
-            <Name>{NAME}</Name>
-            <Title>{TITLE}</Title>
-            <Bio>{BIO}</Bio>
-            <PortfolioButton
-              href={PORTFOLIO}
-              target="_blank"
-              rel="noopener noreferrer">
-              <FaExternalLinkAlt />
-              Visit My Portfolio
-            </PortfolioButton>
-          </ProfileInfo>
-        </HeroSection>
+        <div style={{ textAlign: "center", width: "100%" }}>
+          <BrandMark src={NavbarLogoImg} alt="" />
+          <HeaderText>{APP_INFO.NAME}</HeaderText>
+          <CatalogLead>{PRODUCT_TIP}</CatalogLead>
+          <VersionBadge>Version {APP_INFO.VERSION}</VersionBadge>
+        </div>
 
         <ProjectCard>
           <SectionTitle as="h2">
             <FaCode style={{ marginRight: "0.5rem" }} />
-            What is this Brawl Stars catalog?
+            What you can do here
           </SectionTitle>
-          <p>{APP_INFO.SUMMARY}</p>
           <FeatureList>
             <li>
-              Home catalog for brawlers, maps, and modes — newest brawlers
-              first, with rarity and class filters.
+              Home catalog for brawlers, maps, and modes with shareable URL
+              filters, favorites, random pick, and side-by-side compare.
             </li>
             <li>
-              Favorites, random pick, and HP / speed / attack compare on the
-              same page.
+              Detail pages with enriched stats, gadgets, star powers, skins,
+              gears, and mode ↔ map cross-links.
             </li>
             <li>
-              Map and game-mode detail pages, including retired maps for each
-              mode.
-            </li>
-            <li>
-              Events splits maps into Available and Retired. BrawlAPI does not
-              publish a live rotation clock.
+              Events shows live slots when BrawlAPI publishes them; otherwise
+              Available / Retired maps with search and mode filters.
             </li>
             <li>Arena, Classic, and Neon theme skins in the navbar.</li>
           </FeatureList>
@@ -138,11 +124,10 @@ const About = () => {
               <TechBadge key={tech}>{tech}</TechBadge>
             ))}
           </TechStack>
-          <VersionBadge>Version {APP_INFO.VERSION}</VersionBadge>
         </ProjectCard>
 
         <ProjectCard>
-          <SectionTitle as="h2">Where does the data come from?</SectionTitle>
+          <SectionTitle as="h2">Where the data comes from</SectionTitle>
           <p>
             Catalogs come from{" "}
             <a
@@ -161,13 +146,31 @@ const About = () => {
             CDN.
           </p>
           <p>
-            Not affiliated with Supercell. This app does not look up player
-            tags or battle logs.
+            Not affiliated with Supercell. This app does not look up player tags
+            or battle logs.
           </p>
         </ProjectCard>
 
+        <HeroSection>
+          <ProfileImageWrapper>
+            <ProfileImage aria-hidden="true">MH</ProfileImage>
+          </ProfileImageWrapper>
+          <ProfileInfo>
+            <Name>{NAME}</Name>
+            <Title>{TITLE}</Title>
+            <Bio>{BIO}</Bio>
+            <PortfolioButton
+              href={PORTFOLIO}
+              target="_blank"
+              rel="noopener noreferrer">
+              <FaExternalLinkAlt />
+              Visit portfolio
+            </PortfolioButton>
+          </ProfileInfo>
+        </HeroSection>
+
         <SkillsSection>
-          <SectionTitle>What skills does Murat use?</SectionTitle>
+          <SectionTitle>Stack used on this project</SectionTitle>
           <SkillsGrid>
             {SKILLS.map((skill) => (
               <SkillTag key={skill}>{skill}</SkillTag>
@@ -176,7 +179,7 @@ const About = () => {
         </SkillsSection>
 
         <SocialSection>
-          <SectionTitle>Where can you follow the developer?</SectionTitle>
+          <SectionTitle>Follow the developer</SectionTitle>
           <SocialGrid>
             {socialLinks.map((social) => (
               <SocialLink
@@ -194,7 +197,7 @@ const About = () => {
         </SocialSection>
 
         <Footer>
-          Made with ❤️ by{" "}
+          Built by{" "}
           <a href={PORTFOLIO} target="_blank" rel="noopener noreferrer">
             {NAME}
           </a>

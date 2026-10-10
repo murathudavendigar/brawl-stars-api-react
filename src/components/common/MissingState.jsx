@@ -17,7 +17,7 @@ const MissingState = ({
   code = "404",
   title,
   description,
-  primaryLabel = "GO HOME",
+  primaryLabel = "Back to Lobby",
   onPrimary,
   secondaryLabel,
   onSecondary,

@@ -1,17 +1,29 @@
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useMemo, useState } from "react";
+import { FaLink } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import NavbarLogoImg from "../assets/Brawl_Stars_logo_2025.svg";
 import Cards from "../components/Cards";
 import Header from "../components/Header";
+import RecentStrip from "../components/RecentStrip";
 import ErrorMessage from "../components/common/ErrorMessage";
+import { MissingPortrait } from "../components/common/LazyImage";
 import SEO from "../components/common/SEO";
 import { SkeletonCardGrid } from "../components/common/Skeleton";
-import useFetch from "../hooks/useFetch";
+import useCatalogQuery from "../hooks/useCatalogQuery";
+import useCompare from "../hooks/useCompare";
 import useFavorites from "../hooks/useFavorites";
+import useFetch from "../hooks/useFetch";
 import useGameCatalog from "../hooks/useGameCatalog";
+import useRecentlyViewed from "../hooks/useRecentlyViewed";
 import { normalizeCatalog } from "../lib/api";
+import {
+  COMPARE_METRICS,
+  metricBarPercent,
+  pickWinners,
+} from "../lib/compareStats";
 import { APP_INFO, SEARCH_TYPES, getCatalogUrl } from "../lib/config";
-import { MissingPortrait } from "../components/common/LazyImage";
-import { enrichBrawler, STAT_MAX, statPercent } from "../lib/gameData";
+import { PRODUCT_TIP, COMPARE_LIMIT_HINT } from "../lib/copy";
+import { enrichBrawler } from "../lib/gameData";
 import {
   ButtonCard,
   CompareCard,
@@ -23,7 +35,13 @@ import {
   StatMeterList,
   StatMeterRow,
 } from "../styles/Detail.styled";
-import { CatalogLead, HeaderText, HomeMainDiv } from "../styles/Home.styled";
+import {
+  BrandMark,
+  CatalogHero,
+  CatalogLead,
+  HeaderText,
+  HomeMainDiv,
+} from "../styles/Home.styled";
 
 const ComparePortrait = ({ item }) => {
   const [failed, setFailed] = useState(false);
@@ -39,7 +57,7 @@ const ComparePortrait = ({ item }) => {
 
   return (
     <img
-      src={item.imageUrl}
+      src={item.imageUrl || item.iconUrl}
       alt=""
       aria-hidden="true"
       onError={(event) => {
@@ -61,21 +79,28 @@ const ComparePortrait = ({ item }) => {
 };
 
 const Home = () => {
-  const [searchName, setSearchName] = useState("");
-  const [searchType, setSearchType] = useState("brawlers");
-  const [filters, setFilters] = useState({
-    rarity: "all",
-    class: "all",
-    gameMode: "all",
-    availability: "available",
-  });
-  const [sortBy, setSortBy] = useState("newest");
-  const [viewMode, setViewMode] = useState("grid");
-  const [showFavorites, setShowFavorites] = useState(false);
   const [advancedOpen, setAdvancedOpen] = useState(false);
-  const [selectedCompareIds, setSelectedCompareIds] = useState([]);
+  const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
+  const {
+    searchType,
+    searchName,
+    filters,
+    sortBy,
+    viewMode,
+    showFavorites,
+    patchQuery,
+    resetFilters,
+  } = useCatalogQuery();
   const { favoriteKeys, isFavorite, toggleFavorite } = useFavorites();
+  const {
+    selectedCompareIds,
+    toggleCompare,
+    clearCompare,
+    maxCompare,
+    sharePath,
+  } = useCompare();
+  const { recentItems, clearRecent } = useRecentlyViewed();
 
   const url = getCatalogUrl(searchType);
   const { data, loading: listLoading, error, refetch } = useFetch(url);
@@ -86,13 +111,6 @@ const Home = () => {
     return list.map((brawler) => enrichBrawler(brawler, catalog));
   }, [catalog, data, searchType]);
   const loading = listLoading;
-
-  useEffect(() => {
-    setSortBy(searchType === "brawlers" ? "newest" : "name-asc");
-    if (searchType !== "brawlers") {
-      setSelectedCompareIds([]);
-    }
-  }, [searchType]);
 
   const filterOptions = useMemo(() => {
     const getUniqueSorted = (values) =>
@@ -110,7 +128,10 @@ const Home = () => {
 
     return info
       .filter((item) => {
-        if (normalizedSearch && !item?.name?.toLowerCase().includes(normalizedSearch)) {
+        if (
+          normalizedSearch &&
+          !item?.name?.toLowerCase().includes(normalizedSearch)
+        ) {
           return false;
         }
         if (showFavorites && !isFavorite(searchType, item.id)) return false;
@@ -158,27 +179,52 @@ const Home = () => {
           return (a?.className || "").localeCompare(b?.className || "");
         }
         if (sortBy === "mode") {
-          return (a?.gameMode?.name || "").localeCompare(b?.gameMode?.name || "");
+          return (a?.gameMode?.name || "").localeCompare(
+            b?.gameMode?.name || ""
+          );
         }
         return a.name.localeCompare(b.name);
       });
-  }, [filters, info, isFavorite, searchName, searchType, showFavorites, sortBy]);
+  }, [
+    filters,
+    info,
+    isFavorite,
+    searchName,
+    searchType,
+    showFavorites,
+    sortBy,
+  ]);
 
   const selectedCompareItems = useMemo(
-    () => info.filter((item) => selectedCompareIds.includes(item.id)),
-    [info, selectedCompareIds]
+    () =>
+      searchType === "brawlers"
+        ? selectedCompareIds
+            .map((id) =>
+              info.find(
+                (item) => item.id === id || String(item.id) === String(id)
+              )
+            )
+            .filter(Boolean)
+        : [],
+    [info, searchType, selectedCompareIds]
+  );
+
+  const winners = useMemo(
+    () => pickWinners(selectedCompareItems),
+    [selectedCompareItems]
   );
 
   const getPageTitle = () => {
     const type = Object.values(SEARCH_TYPES).find(
-      (t) => t.value === searchType
+      (entry) => entry.value === searchType
     );
     return type?.label || "Home";
   };
 
   const handleRandomPick = () => {
     if (!filteredInfo.length) return;
-    const randomItem = filteredInfo[Math.floor(Math.random() * filteredInfo.length)];
+    const randomItem =
+      filteredInfo[Math.floor(Math.random() * filteredInfo.length)];
 
     if (searchType === "brawlers") {
       navigate(`/brawlers/${randomItem.id}`, { state: randomItem });
@@ -193,13 +239,16 @@ const Home = () => {
     navigate(`/gamemodes/${randomItem.id}`, { state: randomItem });
   };
 
-  const handleToggleCompare = (item) => {
-    setSelectedCompareIds((currentIds) => {
-      if (currentIds.includes(item.id)) {
-        return currentIds.filter((id) => id !== item.id);
-      }
-      return [...currentIds.slice(-1), item.id];
-    });
+  const handleCopyCompare = async () => {
+    try {
+      await navigator.clipboard.writeText(
+        `${window.location.origin}${sharePath}`
+      );
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1600);
+    } catch {
+      setCopied(false);
+    }
   };
 
   if (error)
@@ -224,12 +273,17 @@ const Home = () => {
         breadcrumbs={[{ name: "Home", path: "/" }]}
       />
       <HomeMainDiv>
-        <HeaderText>Brawl Stars {getPageTitle()}</HeaderText>
-        <CatalogLead>
-          A BrawlAPI catalog for browsing {getPageTitle().toLowerCase()} with
-          search, filters, favorites, and compare. Not a live event clock or
-          player-tag lookup.
-        </CatalogLead>
+        <CatalogHero>
+          <BrandMark src={NavbarLogoImg} alt="" />
+          <HeaderText>Brawl Stars {getPageTitle()}</HeaderText>
+          <CatalogLead>
+            Browse {getPageTitle().toLowerCase()} with search, filters,
+            favorites, and compare. {PRODUCT_TIP}
+          </CatalogLead>
+        </CatalogHero>
+
+        <RecentStrip items={recentItems} onClear={clearRecent} />
+
         <Header
           searchName={searchName}
           searchType={searchType}
@@ -242,60 +296,88 @@ const Home = () => {
           totalCount={info.length}
           favoriteCount={favoriteKeys.length}
           advancedOpen={advancedOpen}
-          setSearchName={setSearchName}
-          setSearchType={setSearchType}
-          setFilters={setFilters}
-          setSortBy={setSortBy}
-          setViewMode={setViewMode}
-          setShowFavorites={setShowFavorites}
+          setSearchName={(value) => patchQuery({ searchName: value })}
+          setSearchType={(value) =>
+            patchQuery({
+              searchType: value,
+              sortBy: value === "brawlers" ? "newest" : "name-asc",
+              searchName: "",
+              filters: {
+                rarity: "all",
+                class: "all",
+                gameMode: "all",
+                availability: "available",
+              },
+            })
+          }
+          setFilters={(nextFilters) => patchQuery({ filters: nextFilters })}
+          setSortBy={(value) => patchQuery({ sortBy: value })}
+          setViewMode={(value) => patchQuery({ viewMode: value })}
+          setShowFavorites={(value) => patchQuery({ showFavorites: value })}
           setAdvancedOpen={setAdvancedOpen}
           onRandomPick={handleRandomPick}
+          onResetFilters={resetFilters}
         />
 
         {selectedCompareItems.length > 0 && (
-          <ComparePanel aria-label="Brawler comparison">
+          <ComparePanel id="compare-panel" aria-label="Brawler comparison">
             <h2>Compare Brawlers</h2>
+            <p style={{ textAlign: "center", margin: 0 }}>
+              {COMPARE_LIMIT_HINT(selectedCompareItems.length, maxCompare)} Gold
+              rows mark the stronger side.
+            </p>
             <CompareGrid>
               {selectedCompareItems.map((item) => (
                 <CompareCard key={item.id}>
                   <ComparePortrait item={item} />
-                  <h3>{item.name}</h3>
+                  <h3>
+                    <Link to={`/brawlers/${item.id}`} state={item}>
+                      {item.name}
+                    </Link>
+                  </h3>
                   <p>{item.className || "Unknown class"}</p>
                   <StatMeterList>
-                    <StatMeterRow>
-                      <span>Health {item.stats?.hitpoints ?? "-"}</span>
-                      <StatBar
-                        $value={statPercent(
-                          item.stats?.hitpoints,
-                          STAT_MAX.hitpoints
-                        )}
-                        $color="#68FD58"
-                      />
-                    </StatMeterRow>
-                    <StatMeterRow>
-                      <span>Speed {item.stats?.speed ?? "-"}</span>
-                      <StatBar
-                        $value={statPercent(item.stats?.speed, STAT_MAX.speed)}
-                        $color="#5EFFFF"
-                      />
-                    </StatMeterRow>
-                    <StatMeterRow>
-                      <span>Attack {item.stats?.attackDamage ?? "-"}</span>
-                      <StatBar
-                        $value={statPercent(
-                          item.stats?.attackDamage,
-                          STAT_MAX.attackDamage
-                        )}
-                        $color="#F01919"
-                      />
-                    </StatMeterRow>
+                    {COMPARE_METRICS.map((metric) => {
+                      const value = metric.getValue(item);
+                      if (
+                        metric.hideIfEmpty &&
+                        (value == null || Number(value) <= 0)
+                      ) {
+                        return null;
+                      }
+                      const isWinner = winners[metric.key]?.has(item.id);
+                      return (
+                        <StatMeterRow key={metric.key} $winner={isWinner}>
+                          <span>
+                            {metric.label} {metric.format(value)}
+                            {isWinner ? " ★" : ""}
+                          </span>
+                          <StatBar
+                            $value={metricBarPercent(metric, value)}
+                            $color={metric.color}
+                          />
+                        </StatMeterRow>
+                      );
+                    })}
                   </StatMeterList>
                 </CompareCard>
               ))}
             </CompareGrid>
-            <ButtonCard $static onClick={() => setSelectedCompareIds([])}>
-              Clear Compare
-            </ButtonCard>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "0.65rem",
+                justifyContent: "center",
+              }}>
+              <ButtonCard $static type="button" onClick={handleCopyCompare}>
+                <FaLink aria-hidden="true" style={{ marginRight: "0.35rem" }} />
+                {copied ? "Link Copied" : "Copy Compare Link"}
+              </ButtonCard>
+              <ButtonCard $static type="button" onClick={clearCompare}>
+                Clear Compare
+              </ButtonCard>
+            </div>
           </ComparePanel>
         )}
 
@@ -310,7 +392,8 @@ const Home = () => {
             isFavorite={isFavorite}
             toggleFavorite={toggleFavorite}
             selectedCompareIds={selectedCompareIds}
-            onToggleCompare={handleToggleCompare}
+            onToggleCompare={toggleCompare}
+            onResetFilters={resetFilters}
           />
         )}
       </HomeMainDiv>

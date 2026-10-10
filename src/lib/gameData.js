@@ -66,6 +66,18 @@ export const STAT_MAX = {
   speed: 1000,
   attackDamage: 4000,
   attackRange: 40,
+  reloadMs: 2500,
+  superDamage: 5000,
+};
+
+export const CLASS_COLORS = {
+  "Damage Dealer": "#F01919",
+  Tank: "#68FD58",
+  Marksman: "#5EFFFF",
+  Assassin: "#d850ff",
+  Support: "#FFB921",
+  Controller: "#5ab3ff",
+  Artillery: "#f88f25",
 };
 
 export const statPercent = (value, max) => {

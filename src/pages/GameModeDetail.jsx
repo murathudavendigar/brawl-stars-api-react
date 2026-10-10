@@ -1,15 +1,17 @@
-import { useMemo, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
+import CatalogBreadcrumb from "../components/common/CatalogBreadcrumb";
 import ErrorMessage from "../components/common/ErrorMessage";
 import MissingState from "../components/common/MissingState";
 import SEO from "../components/common/SEO";
 import { SkeletonDetail } from "../components/common/Skeleton";
+import { useMapsCatalog } from "../context/MapsCatalogContext";
 import useFetch from "../hooks/useFetch";
+import useRecentlyViewed from "../hooks/useRecentlyViewed";
 import {
   compareMapsByRecency,
   mapsForGameMode,
-  normalizeCatalog,
   normalizeGameMode,
 } from "../lib/api";
 import { ENDPOINTS } from "../lib/config";
@@ -19,6 +21,7 @@ import DetailMain, {
   DescriptionCard,
   DetailImage,
   HeroSection,
+  LoadMoreButton,
   MapDetailImage,
   RarityBadge,
   SectionTitle,
@@ -33,7 +36,7 @@ const ColorSwatch = styled.span`
   width: 1.1rem;
   height: 1.1rem;
   border-radius: 999px;
-  background: ${({ $color }) => $color || "#d852ff"};
+  background: ${({ $color }) => $color || "var(--color-primary)"};
   border: 3px solid var(--color-ink);
   box-shadow: var(--shadow-3d);
 `;
@@ -94,6 +97,18 @@ const MapChip = styled.button`
   }
 `;
 
+const EventsLink = styled(Link)`
+  display: inline-flex;
+  padding: 0.55rem 1rem;
+  margin: 0.75rem 0 0.25rem;
+  border-radius: 12px;
+  border: 3px solid var(--color-ink);
+  background: var(--color-gold);
+  color: var(--color-ink);
+  font-family: var(--font-primary);
+  box-shadow: var(--shadow-3d);
+`;
+
 const GameModeDetail = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -107,17 +122,29 @@ const GameModeDetail = () => {
     error,
     refetch,
   } = useFetch(shouldFetchMode ? ENDPOINTS.GAME_MODE(modeId) : null);
-  const mapsFetch = useFetch(ENDPOINTS.MAPS);
+  const { maps } = useMapsCatalog();
+  const { pushRecent } = useRecentlyViewed();
 
   const mode = useMemo(() => {
     if (state) return normalizeGameMode(state);
     return normalizeGameMode(modeData);
   }, [modeData, state]);
 
-  const modeMaps = useMemo(() => {
-    const maps = normalizeCatalog("maps", mapsFetch.data);
-    return mapsForGameMode(maps, mode).sort(compareMapsByRecency);
-  }, [mapsFetch.data, mode]);
+  useEffect(() => {
+    if (!mode?.id) return;
+    pushRecent({
+      id: mode.id,
+      type: "gamemodes",
+      name: mode.name,
+      imageUrl: mode.imageUrl,
+      path: `/gamemodes/${mode.id}`,
+    });
+  }, [mode, pushRecent]);
+
+  const modeMaps = useMemo(
+    () => mapsForGameMode(maps, mode).sort(compareMapsByRecency),
+    [maps, mode]
+  );
 
   const availableMaps = modeMaps.filter((map) => !map.disabled);
   const retiredMaps = modeMaps.filter((map) => map.disabled);
@@ -155,17 +182,27 @@ const GameModeDetail = () => {
         code="KO"
         title="Game mode not found"
         description="BrawlAPI has no game mode for this id. Choose one from the lobby."
-        primaryLabel="GO HOME"
+        primaryLabel="Back to Lobby"
         onPrimary={() => navigate("/")}
-        secondaryLabel="GO BACK"
+        secondaryLabel="Go Back"
         onSecondary={() => navigate(-1)}
       />
     );
   }
 
-  const modeColor = mode.color || "#d852ff";
+  const modeColor = mode.color || "var(--color-primary)";
   const tutorial =
     mode.tutorial && mode.tutorial !== mode.description ? mode.tutorial : null;
+  const primaryCopy = mode.shortDescription || mode.description;
+  const secondaryCopy =
+    mode.shortDescription &&
+    mode.description &&
+    mode.description !== mode.shortDescription
+      ? mode.description
+      : null;
+  const eventsHref = mode.name
+    ? `/events?mode=${encodeURIComponent(mode.name)}`
+    : "/events";
 
   const renderMapChip = (map) => (
     <MapChip
@@ -197,9 +234,16 @@ const GameModeDetail = () => {
         ]}
       />
       <DetailMain>
+        <CatalogBreadcrumb
+          items={[
+            { label: "Home", path: "/" },
+            { label: "Game Modes", path: "/?type=gamemodes" },
+            { label: mode.name },
+          ]}
+        />
         <HeroSection>
           <h1>{mode.name}</h1>
-          <RarityBadge $color={modeColor}>
+          <RarityBadge $color={mode.color || "#d852ff"}>
             <span>{mode.title || "Game Mode"}</span>
             <BadgeSeparator>|</BadgeSeparator>
             <span>{mode.disabled ? "Disabled" : "Active"}</span>
@@ -224,9 +268,11 @@ const GameModeDetail = () => {
             />
           )}
 
+          <EventsLink to={eventsHref}>Open Events · {mode.name}</EventsLink>
+
           <StatsContainer>
             <StatCard>
-              <span className="stat-icon">🎮</span>
+              <span className="stat-icon">FMT</span>
               <span className="stat-value">{mode.title || "-"}</span>
               <span className="stat-label">Format</span>
             </StatCard>
@@ -234,82 +280,95 @@ const GameModeDetail = () => {
               <span className="stat-icon">
                 <ColorSwatch $color={modeColor} />
               </span>
-              <span className="stat-value">{modeColor}</span>
-              <span className="stat-label">Color</span>
+              <span className="stat-value">Mode color</span>
+              <span className="stat-label">Accent</span>
             </StatCard>
             {mode.bgColor && (
               <StatCard>
                 <span className="stat-icon">
                   <ColorSwatch $color={mode.bgColor} />
                 </span>
-                <span className="stat-value">{mode.bgColor}</span>
-                <span className="stat-label">Background</span>
+                <span className="stat-value">Backdrop</span>
+                <span className="stat-label">Panel</span>
               </StatCard>
             )}
             <StatCard>
-              <span className="stat-icon">{mode.disabled ? "⏸" : "✅"}</span>
+              <span className="stat-icon">{mode.disabled ? "OFF" : "ON"}</span>
               <span className="stat-value">
                 {mode.disabled ? "Disabled" : "Active"}
               </span>
               <span className="stat-label">Status</span>
             </StatCard>
             <StatCard>
-              <span className="stat-icon">🗺️</span>
+              <span className="stat-icon">MAPS</span>
               <span className="stat-value">{availableMaps.length}</span>
-              <span className="stat-label">Maps</span>
+              <span className="stat-label">Available</span>
             </StatCard>
           </StatsContainer>
         </HeroSection>
 
-        {mode.shortDescription && (
+        {primaryCopy && (
           <DescriptionCard>
-            <p>{mode.shortDescription}</p>
+            <p>{primaryCopy}</p>
           </DescriptionCard>
         )}
 
-        {mode.description && (
+        {secondaryCopy && (
           <DescriptionCard>
-            <p>{mode.description}</p>
+            <p>{secondaryCopy}</p>
           </DescriptionCard>
         )}
 
         {tutorial && (
           <DescriptionCard>
-            <p>{tutorial}</p>
+            <p>
+              <strong>How to play: </strong>
+              {tutorial}
+            </p>
           </DescriptionCard>
         )}
 
         {availableMaps.length > 0 && (
           <>
-            <SectionTitle>🗺️ Available maps</SectionTitle>
-            <MapsGrid>{availableMaps.slice(0, availableCount).map(renderMapChip)}</MapsGrid>
+            <SectionTitle>Available maps</SectionTitle>
+            <MapsGrid>
+              {availableMaps.slice(0, availableCount).map(renderMapChip)}
+            </MapsGrid>
             {availableCount < availableMaps.length && (
-              <BackButton
+              <LoadMoreButton
                 type="button"
                 onClick={() =>
                   setAvailableCount((count) => count + ITEMS_PER_PAGE)
                 }>
                 Load more maps
-              </BackButton>
+              </LoadMoreButton>
             )}
           </>
         )}
 
         {retiredMaps.length > 0 && (
           <>
-            <SectionTitle>⏸ Retired maps</SectionTitle>
-            <MapsGrid>{retiredMaps.slice(0, retiredCount).map(renderMapChip)}</MapsGrid>
+            <SectionTitle>Retired maps</SectionTitle>
+            <MapsGrid>
+              {retiredMaps.slice(0, retiredCount).map(renderMapChip)}
+            </MapsGrid>
             {retiredCount < retiredMaps.length && (
-              <BackButton
+              <LoadMoreButton
                 type="button"
-                onClick={() => setRetiredCount((count) => count + ITEMS_PER_PAGE)}>
+                onClick={() =>
+                  setRetiredCount((count) => count + ITEMS_PER_PAGE)
+                }>
                 Load more retired
-              </BackButton>
+              </LoadMoreButton>
             )}
           </>
         )}
 
-        <BackButton onClick={() => navigate("/")}>← GO HOME</BackButton>
+        <BackButton
+          type="button"
+          onClick={() => navigate("/?type=gamemodes")}>
+          Back to Game Modes
+        </BackButton>
       </DetailMain>
     </>
   );

@@ -12,9 +12,9 @@ const NotFound = () => {
       code="404"
       title="This map is missing"
       description="That route is not in the catalog. The brawler left the lane, or the page moved. Head back to the lobby."
-      primaryLabel="GO HOME"
+      primaryLabel="Back to Lobby"
       onPrimary={() => navigate("/")}
-      secondaryLabel="GO BACK"
+      secondaryLabel="Go Back"
       onSecondary={() => navigate(-1)}
     />
   );

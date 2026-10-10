@@ -1,4 +1,5 @@
 import HeaderDiv, {
+  ControlBar,
   ControlButton,
   ControlsPanel,
   FilterLabel,
@@ -28,6 +29,7 @@ const Header = ({
   setShowFavorites,
   setAdvancedOpen,
   onRandomPick,
+  onResetFilters,
 }) => {
   const showBrawlerFilters = searchType === "brawlers";
   const showMapFilters = searchType === "maps";
@@ -38,7 +40,7 @@ const Header = ({
         <SearchInput
           type="text"
           aria-label="Search by name"
-          placeholder="Search By Name"
+          placeholder="Search by name"
           value={searchName}
           onChange={(e) => setSearchName(e.target.value)}
         />
@@ -65,12 +67,53 @@ const Header = ({
           <option value="maps">Maps</option>
           <option value="gamemodes">Game Modes</option>
         </SelectList>
-        <SearchButton
-          type="button"
-          onClick={() => setAdvancedOpen((value) => !value)}>
-          {advancedOpen ? "Hide Tools" : "Tools"}
-        </SearchButton>
       </HeaderDiv>
+
+      <ControlBar>
+        <FilterLabel>
+          Sort
+          <SelectList
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            aria-label="Sort results">
+            {showBrawlerFilters && <option value="newest">Newest first</option>}
+            {showBrawlerFilters && <option value="oldest">Oldest first</option>}
+            <option value="name-asc">Name A-Z</option>
+            <option value="name-desc">Name Z-A</option>
+            {showBrawlerFilters && <option value="rarity">Rarity</option>}
+            {showBrawlerFilters && <option value="class">Class</option>}
+            {showMapFilters && <option value="mode">Game mode</option>}
+          </SelectList>
+        </FilterLabel>
+
+        <FilterLabel>
+          View
+          <SelectList
+            value={viewMode}
+            onChange={(e) => setViewMode(e.target.value)}
+            aria-label="View mode">
+            <option value="grid">Grid</option>
+            <option value="compact">Compact</option>
+          </SelectList>
+        </FilterLabel>
+
+        <ControlButton
+          type="button"
+          onClick={() => setShowFavorites(!showFavorites)}>
+          {showFavorites ? "All Items" : "Favorites"}
+        </ControlButton>
+        <ControlButton
+          type="button"
+          onClick={onRandomPick}
+          disabled={!resultCount}>
+          Random Pick
+        </ControlButton>
+        <ControlButton
+          type="button"
+          onClick={() => setAdvancedOpen(!advancedOpen)}>
+          {advancedOpen ? "Hide Filters" : "More Filters"}
+        </ControlButton>
+      </ControlBar>
 
       {advancedOpen && (
         <ControlsPanel>
@@ -81,10 +124,10 @@ const Header = ({
                 <SelectList
                   value={filters.rarity}
                   onChange={(e) =>
-                    setFilters((current) => ({
-                      ...current,
+                    setFilters({
+                      ...filters,
                       rarity: e.target.value,
-                    }))
+                    })
                   }>
                   <option value="all">All rarities</option>
                   {(filterOptions.rarities || []).map((rarity) => (
@@ -100,10 +143,10 @@ const Header = ({
                 <SelectList
                   value={filters.class || "all"}
                   onChange={(e) =>
-                    setFilters((current) => ({
-                      ...current,
+                    setFilters({
+                      ...filters,
                       class: e.target.value,
-                    }))
+                    })
                   }>
                   <option value="all">All classes</option>
                   {(filterOptions.classes || []).map((className) => (
@@ -123,10 +166,10 @@ const Header = ({
                 <SelectList
                   value={filters.gameMode}
                   onChange={(e) =>
-                    setFilters((current) => ({
-                      ...current,
+                    setFilters({
+                      ...filters,
                       gameMode: e.target.value,
-                    }))
+                    })
                   }>
                   <option value="all">All modes</option>
                   {(filterOptions.gameModes || []).map((gameMode) => (
@@ -142,10 +185,10 @@ const Header = ({
                 <SelectList
                   value={filters.availability}
                   onChange={(e) =>
-                    setFilters((current) => ({
-                      ...current,
+                    setFilters({
+                      ...filters,
                       availability: e.target.value,
-                    }))
+                    })
                   }>
                   <option value="available">Available</option>
                   <option value="retired">Retired</option>
@@ -155,43 +198,11 @@ const Header = ({
             </>
           )}
 
-          <FilterLabel>
-            Sort
-            <SelectList
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}>
-              {showBrawlerFilters && (
-                <option value="newest">Newest first</option>
-              )}
-              {showBrawlerFilters && (
-                <option value="oldest">Oldest first</option>
-              )}
-              <option value="name-asc">Name A-Z</option>
-              <option value="name-desc">Name Z-A</option>
-              {showBrawlerFilters && <option value="rarity">Rarity</option>}
-              {showBrawlerFilters && <option value="class">Class</option>}
-              {showMapFilters && <option value="mode">Game mode</option>}
-            </SelectList>
-          </FilterLabel>
-
-          <FilterLabel>
-            View
-            <SelectList
-              value={viewMode}
-              onChange={(e) => setViewMode(e.target.value)}>
-              <option value="grid">Grid</option>
-              <option value="compact">Compact</option>
-            </SelectList>
-          </FilterLabel>
-
-          <ControlButton
-            type="button"
-            onClick={() => setShowFavorites((value) => !value)}>
-            {showFavorites ? "All Items" : "Favorites"}
-          </ControlButton>
-          <ControlButton type="button" onClick={onRandomPick} disabled={!resultCount}>
-            Random Pick
-          </ControlButton>
+          {onResetFilters && (
+            <ControlButton type="button" onClick={onResetFilters}>
+              Reset Filters
+            </ControlButton>
+          )}
         </ControlsPanel>
       )}
 

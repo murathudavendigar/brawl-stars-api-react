@@ -32,34 +32,26 @@ const CardsInfo = styled(Flex)`
   background-repeat: no-repeat;
   background-position: top, center;
   gap: ${({ $gap }) => $gap || "0.55rem"};
-  width: ${({ $compact }) => ($compact ? "12rem" : "14rem")};
-  height: ${({ $compact }) => ($compact ? "26rem" : "34rem")};
+  width: ${({ $compact }) => ($compact ? "11.5rem" : "14rem")};
+  min-height: ${({ $compact }) => ($compact ? "22rem" : "26rem")};
+  height: auto;
   margin: 0.5rem;
-  padding: 3.1rem 0.9rem 3.6rem;
+  padding: 3.1rem 0.9rem 1.15rem;
   font-size: 1rem;
   border-radius: var(--radius-xl);
   position: relative;
   overflow: hidden;
+  cursor: pointer;
   transition: transform 0.16s ease, box-shadow 0.16s ease;
-  animation: ${fadeInUp} 0.45s ease-out backwards;
+  animation: ${fadeInUp} 0.4s ease-out backwards;
 
-  &:nth-child(1) {
-    animation-delay: 0.05s;
+  &:nth-child(-n + 6) {
+    animation-delay: 0.06s;
   }
-  &:nth-child(2) {
-    animation-delay: 0.08s;
-  }
-  &:nth-child(3) {
-    animation-delay: 0.11s;
-  }
-  &:nth-child(4) {
-    animation-delay: 0.14s;
-  }
-  &:nth-child(5) {
-    animation-delay: 0.17s;
-  }
-  &:nth-child(6) {
-    animation-delay: 0.2s;
+
+  &:focus-visible {
+    outline: 3px solid var(--color-gold-light);
+    outline-offset: 4px;
   }
 
   /* Divider under rarity header strip */
@@ -130,11 +122,8 @@ export const ButtonCard = styled.button`
   padding: 0.55rem 1.15rem;
   cursor: pointer;
   border-radius: 14px;
-  position: ${({ $static }) => ($static ? "relative" : "absolute")};
-  bottom: ${({ $static }) => ($static ? "auto" : "12px")};
-  left: ${({ $static }) => ($static ? "auto" : "50%")};
-  transform: ${({ $static }) => ($static ? "none" : "translateX(-50%)")};
-  margin: ${({ $static }) => ($static ? "1rem auto" : "0")};
+  position: relative;
+  margin: ${({ $static }) => ($static ? "1rem auto" : "0.65rem auto 0")};
   font-family: var(--font-primary);
   font-size: 0.9rem;
   background: var(--color-primary);
@@ -146,6 +135,7 @@ export const ButtonCard = styled.button`
   z-index: 10;
   pointer-events: auto;
   white-space: nowrap;
+  display: block;
 
   &::before {
     content: "";
@@ -162,22 +152,29 @@ export const ButtonCard = styled.button`
   &:hover {
     background: var(--color-button-hover);
     color: var(--color-ink);
-    transform: ${({ $static }) =>
-      $static ? "translateY(-2px)" : "translateX(-50%) translateY(-2px)"};
+    transform: translateY(-2px);
     box-shadow: var(--shadow-3d-hover);
   }
 
   &:active {
-    transform: ${({ $static }) =>
-      $static ? "translateY(2px)" : "translateX(-50%) translateY(2px)"};
+    transform: translateY(2px);
     box-shadow: var(--shadow-3d-pressed);
   }
+`;
+
+export const CardStatusRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
+  margin-top: 0.25rem;
 `;
 
 export const CardSkeleton = styled.div`
   ${comicPanel}
   width: 14rem;
-  height: 34rem;
+  min-height: 26rem;
+  height: 26rem;
   margin: 0.5rem;
   border-radius: var(--radius-xl);
   position: relative;

@@ -102,7 +102,7 @@ describe('Cards', () => {
 
     it('should display more maps when "Load More" is clicked', () => {
       render(<Cards info={maps} searchName="" searchType="maps" />);
-      const loadMoreButton = screen.getByText('Load More Maps');
+      const loadMoreButton = screen.getByText('Load More');
       fireEvent.click(loadMoreButton);
       expect(screen.getByText('Map 21')).toBeInTheDocument();
       expect(screen.getByText('Map 25')).toBeInTheDocument();

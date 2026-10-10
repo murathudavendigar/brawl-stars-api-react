@@ -30,7 +30,7 @@ export const getCatalogUrl = (searchType) => {
 // Developer Information
 export const DEVELOPER = {
   NAME: "Murat Hudavendigar Oncu",
-  DISPLAY_NAME: "John Price",
+  DISPLAY_NAME: "Murat Hudavendigar Oncu",
   TITLE: "Frontend Developer",
   BIO: "Frontend developer focused on React and performant UI. This Starr Park catalog is a personal project for browsing Brawl Stars data.",
   PORTFOLIO: "https://muratoncu.com",
@@ -59,7 +59,7 @@ export const APP_INFO = {
   DESCRIPTION:
     "Browse Brawl Stars brawlers, maps, and game modes with filters, favorites, and side-by-side compare.",
   SUMMARY:
-    "Brawl Stars API is a free browser catalog for exploring Brawl Stars brawlers, maps, and game modes. Catalogs come from BrawlAPI. Portraits and profile icons come from the Brawlify CDN. On Home you can filter brawlers by rarity and class, sort newest first, save favorites, pick a random brawler, and compare HP, speed, and attack. Map and game-mode pages include retired maps. Events splits maps into Available and Retired because BrawlAPI does not publish a live rotation clock. The app does not look up player tags or battle logs. Use Home, Events, and About in the navbar, and switch Arena, Classic, or Neon theme skins. JavaScript is required for the interactive catalog. It is a personal React project by Murat Hudavendigar Oncu and is not affiliated with Supercell.",
+    "Brawl Stars API is a free browser catalog for exploring Brawl Stars brawlers, maps, and game modes. Catalogs come from BrawlAPI. Portraits and profile icons come from the Brawlify CDN. Home supports shareable filters, favorites, random pick, and compare. Map and game-mode pages include retired maps and cross-links. Events shows live slots when available, otherwise Available and Retired maps. The app does not look up player tags or battle logs. Arena, Classic, and Neon themes are in the navbar. Personal React project by Murat Hudavendigar Oncu — not affiliated with Supercell.",
 };
 
 export const SITE_URL = "https://brawl-stars-api-react.vercel.app";

@@ -120,6 +120,7 @@ export const cssVariables = `
     --color-text: ${theme.colors.textPrimary};
     --color-text-body: ${theme.colors.textSecondary};
     --color-text-muted: ${theme.colors.textMuted};
+    --color-success: ${theme.colors.success};
 
     /* Spacing */
     --spacing-xs: ${theme.spacing.xs};
@@ -163,50 +164,54 @@ export const cssVariables = `
 
   :root[data-theme="classic"] {
     --page-bg: linear-gradient(180deg, #2d2018 0%, #3c281c 48%, #4a3022 100%);
-    --panel-bg: #3a281c;
-    --nav-bg: #2d2018;
+    --panel-bg: #3f2c1f;
+    --nav-bg: #241810;
     --color-primary: #F01919;
     --color-primary-hover: #D41515;
-    --color-gold: #FFB921;
-    --color-gold-light: #FFE35B;
+    --color-gold: #FFC84A;
+    --color-gold-light: #FFE9A0;
     --color-accent: #FFE35B;
-    --color-button-hover: #FFB921;
-    --color-glass: #3a281c;
+    --color-button-hover: #FFC84A;
+    --color-text-body: #FFF4DD;
+    --color-text-muted: #E8D4A8;
+    --color-glass: #3f2c1f;
     --color-dark: #2d2018;
     --color-darker: #1a120e;
-    --shadow-3d: 0 4px 0 #1a1008;
-    --shadow-3d-hover: 0 6px 0 #1a1008;
-    --shadow-3d-pressed: 0 2px 0 #1a1008;
-    --shadow-md: 0 4px 0 #1a1008;
-    --shadow-lg: 0 6px 0 #1a1008;
-    --shadow-glow: 0 4px 0 #1a1008;
-    --bg-orb-primary: rgba(255, 185, 33, 0.18);
+    --shadow-3d: 0 4px 0 #140e08;
+    --shadow-3d-hover: 0 6px 0 #140e08;
+    --shadow-3d-pressed: 0 2px 0 #140e08;
+    --shadow-md: 0 4px 0 #140e08;
+    --shadow-lg: 0 6px 0 #140e08;
+    --shadow-glow: 0 4px 0 #140e08;
+    --bg-orb-primary: rgba(255, 185, 33, 0.2);
     --bg-orb-accent: rgba(240, 25, 25, 0.14);
     --bg-orb-secondary: rgba(201, 94, 64, 0.16);
   }
 
   :root[data-theme="neon"] {
     --page-bg: linear-gradient(180deg, #07060e 0%, #0B0A12 52%, #120818 100%);
-    --panel-bg: #12101c;
-    --nav-bg: #07060e;
+    --panel-bg: #151322;
+    --nav-bg: #05040c;
     --color-primary: #00BCD9;
     --color-primary-hover: #00a5c0;
-    --color-gold: #00BCD9;
-    --color-gold-light: #5EFFFF;
+    --color-gold: #5EFFFF;
+    --color-gold-light: #B8FFFF;
     --color-accent: #FF2D9B;
     --color-button-hover: #FF2D9B;
-    --color-glass: #12101c;
+    --color-text-body: #E8FBFF;
+    --color-text-muted: #A8D4DE;
+    --color-glass: #151322;
     --color-dark: #0B0A12;
     --color-darker: #05040a;
-    --shadow-3d: 0 4px 0 #05040a;
-    --shadow-3d-hover: 0 6px 0 #05040a;
-    --shadow-3d-pressed: 0 2px 0 #05040a;
-    --shadow-md: 0 4px 0 #05040a;
-    --shadow-lg: 0 6px 0 #05040a;
-    --shadow-glow: 0 4px 0 #05040a;
-    --bg-orb-primary: rgba(0, 188, 217, 0.16);
-    --bg-orb-accent: rgba(255, 45, 155, 0.14);
-    --bg-orb-secondary: rgba(94, 255, 255, 0.08);
+    --shadow-3d: 0 4px 0 #030208;
+    --shadow-3d-hover: 0 6px 0 #030208;
+    --shadow-3d-pressed: 0 2px 0 #030208;
+    --shadow-md: 0 4px 0 #030208;
+    --shadow-lg: 0 6px 0 #030208;
+    --shadow-glow: 0 4px 0 #030208;
+    --bg-orb-primary: rgba(0, 188, 217, 0.18);
+    --bg-orb-accent: rgba(255, 45, 155, 0.16);
+    --bg-orb-secondary: rgba(94, 255, 255, 0.1);
   }
 `;
 

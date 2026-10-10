@@ -457,11 +457,18 @@ export const StatMeterList = styled.div`
 export const StatMeterRow = styled.div`
   display: grid;
   gap: 0.3rem;
+  padding: ${({ $winner }) => ($winner ? "0.35rem 0.45rem" : "0")};
+  border-radius: 10px;
+  background: ${({ $winner }) =>
+    $winner ? "rgba(255, 185, 33, 0.18)" : "transparent"};
+  border: ${({ $winner }) =>
+    $winner ? "2px solid var(--color-gold)" : "2px solid transparent"};
 
   span {
     font-family: var(--font-primary);
     font-size: 0.85rem;
-    color: var(--color-gold-light);
+    color: ${({ $winner }) =>
+      $winner ? "var(--color-gold)" : "var(--color-gold-light)"};
     text-shadow: 2px 2px 0 var(--color-ink);
   }
 `;
@@ -509,13 +516,66 @@ export const SkinTile = styled.article`
   span {
     position: relative;
     z-index: 1;
-    padding: 0.6rem 0.2rem 0;
+    padding: 0.45rem 0.2rem 0;
     color: var(--color-white);
     font-family: var(--font-primary);
     font-size: 0.72rem;
     line-height: 1.15;
     text-align: center;
     text-shadow: 2px 2px 0 var(--color-ink);
+  }
+
+  small {
+    position: relative;
+    z-index: 1;
+    display: block;
+    margin-top: 0.2rem;
+    color: var(--color-gold-light);
+    font-family: var(--font-secondary);
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-align: center;
+    text-shadow: 1px 1px 0 var(--color-ink);
+  }
+`;
+
+export const LoadMoreButton = styled.button`
+  padding: 0.75rem 1.5rem;
+  margin: 0.25rem auto 1.25rem;
+  display: block;
+  border-radius: 14px;
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  background: var(--color-primary);
+  color: var(--color-white);
+  border: 3px solid var(--color-ink);
+  box-shadow: var(--shadow-3d);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 12px;
+    right: 12px;
+    height: 38%;
+    background: rgba(255, 255, 255, 0.28);
+    border-radius: 10px 10px 40% 40%;
+    pointer-events: none;
+  }
+
+  &:hover {
+    background: var(--color-button-hover);
+    color: var(--color-ink);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-3d-hover);
+  }
+
+  &:active {
+    transform: translateY(2px);
+    box-shadow: var(--shadow-3d-pressed);
   }
 `;
 

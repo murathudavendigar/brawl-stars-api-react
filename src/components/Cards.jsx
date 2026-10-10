@@ -1,60 +1,64 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { FaExchangeAlt, FaStar } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { CLASS_COLORS } from "../lib/gameData";
 import CardsInfo, {
   ButtonCard,
   CardActionRow,
+  CardMain,
+  CardStatusRow,
   CardText,
   CardTitle,
-  CardMain,
   EmptyState,
   IconActionButton,
 } from "../styles/Card.styled";
 import { ClassBadge } from "../styles/Detail.styled";
+import StatusBadge from "./common/StatusBadge";
 import LazyImage from "./common/LazyImage";
 
 const ITEMS_PER_PAGE = 20;
 
 const SpacedLazyImage = styled(LazyImage)`
-  margin-bottom: 1rem;
+  margin-bottom: 0.65rem;
 `;
 
-const ClickableCard = styled(CardsInfo)`
-  cursor: pointer;
-`;
+const detailPath = (searchType, id) => {
+  if (searchType === "brawlers") return `/brawlers/${id}`;
+  if (searchType === "maps") return `/maps/${id}`;
+  return `/gamemodes/${id}`;
+};
 
 const Cards = ({
   info,
-  searchName,
+  searchName = "",
   searchType,
   viewMode = "grid",
   isFavorite = () => false,
   toggleFavorite = () => {},
   selectedCompareIds = [],
   onToggleCompare = () => {},
+  onResetFilters,
 }) => {
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const navigate = useNavigate();
 
-  // Reset visible count when searchType changes
   useEffect(() => {
     setVisibleCount(ITEMS_PER_PAGE);
-  }, [searchType, info]);
+  }, [searchType, info, searchName]);
 
-  // Filter items based on search
   const filteredItems = useMemo(() => {
     if (!info) return [];
-    return info.filter((x) =>
-      x?.name?.toLowerCase().includes(searchName.toLowerCase())
-    );
+    const query = searchName.trim().toLowerCase();
+    if (!query) return info;
+    return info.filter((item) => item?.name?.toLowerCase().includes(query));
   }, [info, searchName]);
 
-  // Get visible items for maps (paginated)
-  const visibleMaps = useMemo(() => {
-    return filteredItems.slice(0, visibleCount);
-  }, [filteredItems, visibleCount]);
+  const visibleItems = useMemo(
+    () => filteredItems.slice(0, visibleCount),
+    [filteredItems, visibleCount]
+  );
 
-  // Load more handler
   const loadMore = useCallback(() => {
     setVisibleCount((prev) => prev + ITEMS_PER_PAGE);
   }, []);
@@ -66,169 +70,146 @@ const Cards = ({
     return (
       <EmptyState role="status">
         <h3>No results found</h3>
-        <p>Try another name or switch the content type.</p>
+        <p>Try another name, clear filters, or switch the content type.</p>
+        {onResetFilters && (
+          <ButtonCard type="button" $static onClick={onResetFilters}>
+            Reset Filters
+          </ButtonCard>
+        )}
       </EmptyState>
     );
   }
 
-  return (
-    <>
-      {searchType === "brawlers" && (
-        <CardMain wrap="wrap" $overflowY="hidden">
-          {filteredItems.map((item, index) => (
-            <CardsInfo
-              key={item.id || index}
-              justify="baseline"
-              $background={item?.bgColor || item?.rarity?.color}
-              $compact={isCompact}>
-              <CardActionRow>
-                <IconActionButton
-                  type="button"
-                  aria-label={
-                    isFavorite(searchType, item.id)
-                      ? `Remove ${item.name} from favorites`
-                      : `Add ${item.name} to favorites`
-                  }
-                  $active={isFavorite(searchType, item.id)}
-                  onClick={() => toggleFavorite(searchType, item.id)}>
-                  ★
-                </IconActionButton>
-                <IconActionButton
-                  type="button"
-                  aria-label={`Compare ${item.name}`}
-                  $active={selectedCompareIds.includes(item.id)}
-                  onClick={() => onToggleCompare(item)}>
-                  ⇄
-                </IconActionButton>
-              </CardActionRow>
-              <h2>{item.name}</h2>
-              {item.className && (
-                <ClassBadge $color={item?.rarity?.color}>
-                  {item.className}
-                </ClassBadge>
-              )}
-              <SpacedLazyImage
-                src={item.imageUrl}
-                fallbackSrc={[item.imageUrl2, item.iconUrl]}
-                alt={`${item.name} brawler`}
-                width="150px"
-                height="150px"
-                missingLabel="NEW"
-              />
-              <p>{item.description}</p>
-              {!item.released && (
-                <CardText $spaced>Unreleased</CardText>
-              )}
-              <ButtonCard
-                onClick={() => navigate(`/brawlers/${item.id}`, { state: item })}>
-                View Details
-              </ButtonCard>
-            </CardsInfo>
-          ))}
-        </CardMain>
-      )}
+  const openDetail = (item) => {
+    navigate(detailPath(searchType, item.id), { state: item });
+  };
 
-      {searchType === "gamemodes" && (
-        <CardMain wrap="wrap" $overflowY="auto">
-          {filteredItems.map((item, index) => (
-            <ClickableCard
-              key={item.id || index}
-              justify="baseline"
-              $background={item?.bgColor}
-              $compact={isCompact}
-              onClick={() =>
-                navigate(`/gamemodes/${item.id}`, { state: item })
-              }>
-              <CardActionRow>
-                <IconActionButton
-                  type="button"
-                  aria-label={
-                    isFavorite(searchType, item.id)
-                      ? `Remove ${item.name} from favorites`
-                      : `Add ${item.name} to favorites`
-                  }
-                  $active={isFavorite(searchType, item.id)}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    toggleFavorite(searchType, item.id);
-                  }}>
-                  ★
-                </IconActionButton>
-              </CardActionRow>
-              <CardTitle $compact>{item.name}</CardTitle>
-              <SpacedLazyImage
-                src={item.imageUrl}
-                fallbackSrc={item.imageUrl2}
-                alt={`${item.name} game mode`}
-                width="90px"
-                height="90px"
-              />
-              <p>{item.description}</p>
-              <ButtonCard
-                onClick={(event) => {
-                  event.stopPropagation();
-                  navigate(`/gamemodes/${item.id}`, { state: item });
-                }}>
-                View Details
-              </ButtonCard>
-            </ClickableCard>
-          ))}
-        </CardMain>
-      )}
+  const renderCard = (item, index) => {
+    const background =
+      item?.bgColor || item?.rarity?.color || item?.gameMode?.color;
+    const classColor =
+      CLASS_COLORS[item?.className] || item?.rarity?.color || "var(--color-primary)";
 
-      {searchType === "maps" && (
-        <CardMain wrap="wrap">
-          {visibleMaps.map((item, index) => (
-            <CardsInfo
-              key={item.id || index}
-              justify="baseline"
-              $background={item?.gameMode?.color}
-              $gap="0.75rem"
-              $compact={isCompact}>
-              <CardActionRow>
-                <IconActionButton
-                  type="button"
-                  aria-label={
-                    isFavorite(searchType, item.id)
-                      ? `Remove ${item.name} from favorites`
-                      : `Add ${item.name} to favorites`
-                  }
-                  $active={isFavorite(searchType, item.id)}
-                  onClick={() => toggleFavorite(searchType, item.id)}>
-                  ★
-                </IconActionButton>
-              </CardActionRow>
-              <CardTitle>{item?.name}</CardTitle>
-              <LazyImage
-                src={item?.gameMode?.imageUrl}
-                alt={`${item?.gameMode?.name} icon`}
-                width="50px"
-                height="50px"
-              />
-              <CardText>-{item?.gameMode?.name}-</CardText>
-              <LazyImage
-                src={item?.imageUrl}
-                alt={`${item?.name} map`}
-                width="150px"
-                height="150px"
-              />
-              {item?.description && <p>{item.description}</p>}
-              <ButtonCard
-                onClick={() => navigate(`/maps/${item.id}`, { state: item })}>
-                View Details
-              </ButtonCard>
-            </CardsInfo>
-          ))}
-          {hasMore && (
-            <ButtonCard
-              onClick={loadMore}
-              $static>
-              Load More Maps
-            </ButtonCard>
+    return (
+      <CardsInfo
+        key={item.id || index}
+        justify="baseline"
+        $background={background}
+        $gap={searchType === "maps" ? "0.65rem" : undefined}
+        $compact={isCompact}
+        role="link"
+        tabIndex={0}
+        onClick={() => openDetail(item)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            openDetail(item);
+          }
+        }}>
+        <CardActionRow>
+          <IconActionButton
+            type="button"
+            aria-label={
+              isFavorite(searchType, item.id)
+                ? `Remove ${item.name} from favorites`
+                : `Add ${item.name} to favorites`
+            }
+            $active={isFavorite(searchType, item.id)}
+            onClick={(event) => {
+              event.stopPropagation();
+              toggleFavorite(searchType, item.id);
+            }}>
+            <FaStar aria-hidden="true" />
+          </IconActionButton>
+          {searchType === "brawlers" && (
+            <IconActionButton
+              type="button"
+              aria-label={`Compare ${item.name}`}
+              $active={selectedCompareIds.includes(item.id)}
+              onClick={(event) => {
+                event.stopPropagation();
+                onToggleCompare(item);
+              }}>
+              <FaExchangeAlt aria-hidden="true" />
+            </IconActionButton>
           )}
-        </CardMain>
+        </CardActionRow>
+
+        <CardTitle $compact={isCompact}>{item.name}</CardTitle>
+
+        {searchType === "brawlers" && item.className && (
+          <ClassBadge $color={classColor}>{item.className}</ClassBadge>
+        )}
+
+        {searchType === "maps" && (
+          <>
+            <LazyImage
+              src={item?.gameMode?.imageUrl}
+              alt=""
+              width="48px"
+              height="48px"
+            />
+            <CardText>{item?.gameMode?.name}</CardText>
+          </>
+        )}
+
+        <SpacedLazyImage
+          src={
+            searchType === "maps"
+              ? item.imageUrl
+              : item.imageUrl || item.imageUrl2
+          }
+          fallbackSrc={
+            searchType === "brawlers"
+              ? [item.imageUrl2, item.iconUrl]
+              : item.imageUrl2
+          }
+          alt={`${item.name} ${
+            searchType === "brawlers"
+              ? "brawler"
+              : searchType === "maps"
+                ? "map"
+                : "game mode"
+          }`}
+          width={searchType === "gamemodes" ? "90px" : "150px"}
+          height={searchType === "gamemodes" ? "90px" : "150px"}
+          missingLabel={searchType === "brawlers" ? "NEW" : undefined}
+        />
+
+        {item.description && <p>{item.description}</p>}
+
+        <CardStatusRow>
+          {searchType === "brawlers" && !item.released && (
+            <StatusBadge kind="unreleased">Unreleased</StatusBadge>
+          )}
+          {searchType === "maps" && (
+            <StatusBadge kind={item.disabled ? "retired" : "available"}>
+              {item.disabled ? "Retired" : "Available"}
+            </StatusBadge>
+          )}
+        </CardStatusRow>
+
+        <ButtonCard
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            openDetail(item);
+          }}>
+          View Details
+        </ButtonCard>
+      </CardsInfo>
+    );
+  };
+
+  return (
+    <CardMain wrap="wrap" $overflowY="visible">
+      {visibleItems.map(renderCard)}
+      {hasMore && (
+        <ButtonCard type="button" onClick={loadMore} $static>
+          Load More
+        </ButtonCard>
       )}
-    </>
+    </CardMain>
   );
 };
 

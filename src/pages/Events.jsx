@@ -1,31 +1,36 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import ErrorMessage from "../components/common/ErrorMessage";
 import SEO from "../components/common/SEO";
 import { SkeletonEventGrid } from "../components/common/Skeleton";
+import StatusBadge from "../components/common/StatusBadge";
+import { useMapsCatalog } from "../context/MapsCatalogContext";
 import useFetch from "../hooks/useFetch";
 import {
   compareMapsByRecency,
   hasLiveEvents,
-  normalizeCatalog,
   normalizeMap,
   parseMapTimestamp,
 } from "../lib/api";
 import { ENDPOINTS } from "../lib/config";
-import CardsInfo, {
-  ButtonCard,
-  CardImage,
-  CardMain,
-  CardText,
-  CardTitle,
-  EmptyState,
-  EventTimeLabel,
-} from "../styles/Card.styled";
+import {
+  EVENTS_FALLBACK_LEAD,
+  EVENTS_FALLBACK_NOTICE,
+  EVENTS_LIVE_LEAD,
+  PRODUCT_TIP,
+} from "../lib/copy";
+import { ButtonCard, CardMain, EmptyState } from "../styles/Card.styled";
 import ButtonEventsPage, {
   CountdownBadge,
+  EventFilters,
   EventNotice,
+  EventRow,
+  EventRowBody,
+  EventRowMeta,
   EventTabs,
+  ModeChip,
 } from "../styles/Events.styled";
+import { SearchInput, SelectList } from "../styles/Header.styled";
 import { CatalogLead, HeaderText } from "../styles/Home.styled";
 
 const ITEMS_PER_PAGE = 20;
@@ -86,14 +91,18 @@ const Events = () => {
   const [activeTab, setActiveTab] = useState("active");
   const [now, setNow] = useState(() => new Date());
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+  const [searchName, setSearchName] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const eventsFetch = useFetch(ENDPOINTS.EVENTS);
-  const mapsFetch = useFetch(ENDPOINTS.MAPS);
+  const eventsFetch = useFetch(ENDPOINTS.EVENTS, { swr: true });
+  const {
+    maps,
+    loading: mapsLoading,
+    error: mapsError,
+    refetch: refetchMaps,
+  } = useMapsCatalog();
   const usingLiveEvents = hasLiveEvents(eventsFetch.data);
-  const maps = useMemo(
-    () => normalizeCatalog("maps", mapsFetch.data),
-    [mapsFetch.data]
-  );
+  const gameModeFilter = searchParams.get("mode") || "all";
 
   useEffect(() => {
     if (!usingLiveEvents) return undefined;
@@ -102,24 +111,74 @@ const Events = () => {
   }, [usingLiveEvents]);
 
   const loading =
-    eventsFetch.loading || (!usingLiveEvents && mapsFetch.loading);
+    eventsFetch.loading || (!usingLiveEvents && mapsLoading);
   const error = usingLiveEvents
     ? eventsFetch.error
-    : mapsFetch.error && !maps.length;
+    : mapsError && !maps.length;
 
-  const liveEvents =
-    activeTab === "active"
-      ? eventsFetch.data?.active || []
-      : eventsFetch.data?.upcoming || [];
+  const setGameModeFilter = (value) => {
+    setSearchParams(
+      (current) => {
+        const next = new URLSearchParams(current);
+        if (!value || value === "all") next.delete("mode");
+        else next.set("mode", value);
+        return next;
+      },
+      { replace: true }
+    );
+    setVisibleCount(ITEMS_PER_PAGE);
+  };
+
+  const gameModeOptions = useMemo(() => {
+    const names = maps
+      .map((map) => map?.gameMode?.name)
+      .filter(Boolean);
+    return [...new Set(names)].sort((a, b) => a.localeCompare(b));
+  }, [maps]);
 
   const catalogMaps = useMemo(() => {
     if (usingLiveEvents) return [];
+    const query = searchName.trim().toLowerCase();
     return maps
       .filter((map) =>
         activeTab === "active" ? !map.disabled : map.disabled
       )
+      .filter((map) =>
+        query ? map?.name?.toLowerCase().includes(query) : true
+      )
+      .filter((map) =>
+        gameModeFilter === "all"
+          ? true
+          : map?.gameMode?.name === gameModeFilter
+      )
       .sort(compareMapsByRecency);
-  }, [activeTab, maps, usingLiveEvents]);
+  }, [activeTab, gameModeFilter, maps, searchName, usingLiveEvents]);
+
+  const filteredLiveEvents = useMemo(() => {
+    if (!usingLiveEvents) return [];
+    const liveEvents =
+      activeTab === "active"
+        ? eventsFetch.data?.active || []
+        : eventsFetch.data?.upcoming || [];
+    const query = searchName.trim().toLowerCase();
+    return liveEvents.filter((item) => {
+      const map = normalizeMap(item?.map);
+      if (query && !map?.name?.toLowerCase().includes(query)) return false;
+      if (
+        gameModeFilter !== "all" &&
+        map?.gameMode?.name !== gameModeFilter
+      ) {
+        return false;
+      }
+      return true;
+    });
+  }, [
+    activeTab,
+    eventsFetch.data,
+    gameModeFilter,
+    searchName,
+    usingLiveEvents,
+  ]);
 
   const lastSeenLabel = (map) => {
     const timestamp = parseMapTimestamp(map?.lastActive);
@@ -136,7 +195,7 @@ const Events = () => {
           message={error || "Failed to load events. Please try again."}
           onRetry={() => {
             eventsFetch.refetch();
-            mapsFetch.refetch();
+            refetchMaps();
           }}
         />
       </>
@@ -147,92 +206,93 @@ const Events = () => {
     setVisibleCount(ITEMS_PER_PAGE);
   };
 
+  const openMap = (map) => {
+    if (map?.id) {
+      navigate(`/maps/${map.id}`, { state: map });
+      return;
+    }
+    if (map?.link) window.open(map.link, "_blank", "noopener,noreferrer");
+  };
+
   const renderLiveEvent = (item, index) => {
     const map = normalizeMap(item?.map);
     return (
-      <CardsInfo
-        justify="baseline"
+      <EventRow
         key={map?.id || index}
-        $background={map?.gameMode?.bgColor}>
-        <CardTitle as="h3">{map?.name}</CardTitle>
-        <CardText $spaced>{map?.gameMode?.name}</CardText>
-        <CardImage
-          src={map?.gameMode?.imageUrl}
-          alt={`${map?.gameMode?.name || "Game mode"} icon`}
-          width="130px"
-          height="130px"
-          loading="lazy"
-          $eventIcon
-        />
-        <EventTimeLabel>Start Time</EventTimeLabel>
-        <h5>{formatEventDate(item?.startTime)}</h5>
-        <CountdownBadge>
-          {formatCountdown(
-            parseEventDate(
-              activeTab === "active" ? item?.endTime : item?.startTime
-            ),
-            now,
-            activeTab === "active" ? "Ends" : "Starts"
-          )}
-        </CountdownBadge>
-        <EventTimeLabel $spaced>End Time</EventTimeLabel>
-        <h5>{formatEventDate(item?.endTime)}</h5>
-        <CardImage
-          src={map?.imageUrl}
-          alt={`${map?.name || "Map"} map`}
-          width="150px"
-          height="150px"
-          loading="lazy"
-        />
-        <ButtonCard
-          onClick={() =>
-            map?.id
-              ? navigate(`/maps/${map.id}`, { state: map })
-              : window.open(map?.link, "_blank", "noopener,noreferrer")
-          }>
-          View Details
-        </ButtonCard>
-      </CardsInfo>
+        role="link"
+        tabIndex={0}
+        onClick={() => openMap(map)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            openMap(map);
+          }
+        }}>
+        <img src={map?.imageUrl} alt="" loading="lazy" />
+        <EventRowBody>
+          <h3>{map?.name || "Unknown map"}</h3>
+          <ModeChip>
+            {map?.gameMode?.imageUrl && (
+              <img src={map.gameMode.imageUrl} alt="" />
+            )}
+            {map?.gameMode?.name || "Game mode"}
+          </ModeChip>
+          <p>
+            {formatEventDate(item?.startTime)} → {formatEventDate(item?.endTime)}
+          </p>
+        </EventRowBody>
+        <EventRowMeta>
+          <CountdownBadge>
+            {formatCountdown(
+              parseEventDate(
+                activeTab === "active" ? item?.endTime : item?.startTime
+              ),
+              now,
+              activeTab === "active" ? "Ends" : "Starts"
+            )}
+          </CountdownBadge>
+        </EventRowMeta>
+      </EventRow>
     );
   };
 
   const renderCatalogMap = (map, index) => (
-    <CardsInfo
-      justify="baseline"
+    <EventRow
       key={map?.id || index}
-      $background={map?.gameMode?.bgColor || map?.gameMode?.color}>
-      <CardTitle as="h3">{map?.name}</CardTitle>
-      <CardText $spaced>{map?.gameMode?.name}</CardText>
-      <CardImage
-        src={map?.gameMode?.imageUrl}
-        alt={`${map?.gameMode?.name || "Game mode"} icon`}
-        width="130px"
-        height="130px"
-        loading="lazy"
-        $eventIcon
-      />
-      <CardText $spaced>
-        {map?.environment?.name ? `Theme: ${map.environment.name}` : map.description}
-      </CardText>
-      {map?.credit && <CardText>Created by {map.credit}</CardText>}
-      {lastSeenLabel(map) && (
-        <CardText $spaced>Last seen {lastSeenLabel(map)}</CardText>
-      )}
-      <CardImage
-        src={map?.imageUrl}
-        alt={`${map?.name || "Map"} map`}
-        width="150px"
-        height="150px"
-        loading="lazy"
-      />
-      <ButtonCard
-        onClick={() => navigate(`/maps/${map.id}`, { state: map })}>
-        View Details
-      </ButtonCard>
-    </CardsInfo>
+      role="link"
+      tabIndex={0}
+      onClick={() => openMap(map)}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openMap(map);
+        }
+      }}>
+      <img src={map?.imageUrl} alt="" loading="lazy" />
+      <EventRowBody>
+        <h3>{map?.name}</h3>
+        <ModeChip>
+          {map?.gameMode?.imageUrl && (
+            <img src={map.gameMode.imageUrl} alt="" />
+          )}
+          {map?.gameMode?.name || "Game mode"}
+        </ModeChip>
+        <p>
+          {map?.environment?.name
+            ? `Theme: ${map.environment.name}`
+            : map.description}
+        </p>
+        {lastSeenLabel(map) && <p>Last seen {lastSeenLabel(map)}</p>}
+      </EventRowBody>
+      <EventRowMeta>
+        <StatusBadge kind={map.disabled ? "retired" : "available"}>
+          {map.disabled ? "Retired" : "Available"}
+        </StatusBadge>
+      </EventRowMeta>
+    </EventRow>
   );
 
-  const currentItems = usingLiveEvents ? liveEvents : visibleMaps;
+  const currentItems = usingLiveEvents ? filteredLiveEvents : visibleMaps;
   const tabLabel = usingLiveEvents
     ? activeTab === "active"
       ? "active"
@@ -264,9 +324,8 @@ const Events = () => {
         {usingLiveEvents ? "Brawl Stars events" : "Brawl Stars maps"}
       </HeaderText>
       <CatalogLead>
-        {usingLiveEvents
-          ? "Current and upcoming Brawl Stars event slots from BrawlAPI."
-          : "Available and retired Brawl Stars maps from the BrawlAPI catalog."}
+        {usingLiveEvents ? EVENTS_LIVE_LEAD : EVENTS_FALLBACK_LEAD}{" "}
+        {PRODUCT_TIP}
       </CatalogLead>
       <EventTabs>
         <ButtonEventsPage
@@ -281,29 +340,65 @@ const Events = () => {
         </ButtonEventsPage>
       </EventTabs>
 
+      <EventFilters>
+        <SearchInput
+          type="text"
+          aria-label="Search maps by name"
+          placeholder="Search maps"
+          value={searchName}
+          onChange={(event) => {
+            setSearchName(event.target.value);
+            setVisibleCount(ITEMS_PER_PAGE);
+          }}
+        />
+        <SelectList
+          aria-label="Filter by game mode"
+          value={gameModeFilter}
+          onChange={(event) => setGameModeFilter(event.target.value)}>
+          <option value="all">All modes</option>
+          {gameModeOptions.map((modeName) => (
+            <option key={modeName} value={modeName}>
+              {modeName}
+            </option>
+          ))}
+        </SelectList>
+      </EventFilters>
+
       {!usingLiveEvents && !loading && (
-        <EventNotice>
-          BrawlAPI has no live event clock. Maps are listed newest first, and
-          by last seen date when the API provides it.
-        </EventNotice>
+        <EventNotice>{EVENTS_FALLBACK_NOTICE}</EventNotice>
       )}
 
-      <CardMain wrap="wrap">
+      <CardMain
+        wrap="wrap"
+        style={{ flexDirection: "column", alignItems: "stretch" }}>
         {loading ? (
           <SkeletonEventGrid count={6} />
         ) : currentItems?.length === 0 ? (
           <EmptyState role="status">
             <h3>No {tabLabel} maps right now</h3>
-            <p>Try the other tab or check again later.</p>
+            <p>Try another tab, clear search, or check again later.</p>
+            {(searchName || gameModeFilter !== "all") && (
+              <ButtonCard
+                type="button"
+                $static
+                onClick={() => {
+                  setSearchName("");
+                  setGameModeFilter("all");
+                  setVisibleCount(ITEMS_PER_PAGE);
+                }}>
+                Reset Filters
+              </ButtonCard>
+            )}
           </EmptyState>
         ) : usingLiveEvents ? (
-          liveEvents.map(renderLiveEvent)
+          filteredLiveEvents.map(renderLiveEvent)
         ) : (
           <>
             {visibleMaps.map(renderCatalogMap)}
             {visibleCount < catalogMaps.length && (
               <ButtonCard
                 $static
+                type="button"
                 onClick={() =>
                   setVisibleCount((count) => count + ITEMS_PER_PAGE)
                 }>

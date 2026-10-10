@@ -1,15 +1,27 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
+import { FaExchangeAlt, FaStar } from "react-icons/fa";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
+import CatalogBreadcrumb from "../components/common/CatalogBreadcrumb";
 import ErrorMessage from "../components/common/ErrorMessage";
 import MissingState from "../components/common/MissingState";
 import SEO from "../components/common/SEO";
 import { SkeletonDetail } from "../components/common/Skeleton";
+import useCompare from "../hooks/useCompare";
+import useFavorites from "../hooks/useFavorites";
 import useFetch from "../hooks/useFetch";
 import useGameCatalog from "../hooks/useGameCatalog";
+import useRecentlyViewed from "../hooks/useRecentlyViewed";
 import { normalizeBrawler } from "../lib/api";
+import { sortSkins } from "../lib/compareStats";
 import { ENDPOINTS } from "../lib/config";
-import { enrichBrawler, formatReload, STAT_MAX, statPercent } from "../lib/gameData";
+import {
+  enrichBrawler,
+  formatReload,
+  STAT_MAX,
+  statPercent,
+} from "../lib/gameData";
+import { IconActionButton } from "../styles/Card.styled";
 import DetailMain, {
   AbilitiesGrid,
   AbilityCard,
@@ -24,16 +36,21 @@ import DetailMain, {
   DetailImage,
   HeroSection,
   RarityBadge,
+  SectionTitle,
   SkinGrid,
   SkinTile,
-  SectionTitle,
   StatBar,
   StatCard,
   StatMeterList,
   StatMeterRow,
-  StatValue,
   StatsContainer,
+  StatValue,
 } from "../styles/Detail.styled";
+import {
+  HeroActionRow,
+  SectionJumpBar,
+  SectionJumpLink,
+} from "../styles/Shared.styled";
 
 const RARITY_COLORS = {
   Common: "#b9eaff",
@@ -92,11 +109,31 @@ const Detail = () => {
     refetch,
   } = useFetch(shouldFetchBrawler ? ENDPOINTS.BRAWLER(brawlerId) : null);
   const { catalog } = useGameCatalog();
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const { isComparing, toggleCompare, maxCompare, selectedCompareIds } =
+    useCompare();
+  const { pushRecent } = useRecentlyViewed();
 
   const brawler = useMemo(() => {
     const source = state || brawlerData;
     return enrichBrawler(normalizeBrawler(source), catalog);
   }, [brawlerData, catalog, state]);
+
+  useEffect(() => {
+    if (!brawler?.id) return;
+    pushRecent({
+      id: brawler.id,
+      type: "brawlers",
+      name: brawler.name,
+      imageUrl: brawler.imageUrl || brawler.iconUrl,
+      path: `/brawlers/${brawler.id}`,
+    });
+  }, [brawler, pushRecent]);
+
+  const sortedSkins = useMemo(
+    () => sortSkins(brawler?.skins || []),
+    [brawler]
+  );
 
   if (loading && shouldFetchBrawler) {
     return (
@@ -144,6 +181,23 @@ const Detail = () => {
     brawler?.rarity?.color || RARITY_COLORS[rarityName] || "#ff4757";
   const playstyle = brawler?.playstyle;
   const stats = brawler.stats || {};
+  const favorited = isFavorite("brawlers", brawler.id);
+  const comparing = isComparing(brawler.id);
+  const sectionLinks = [
+    { href: "#stats", label: "Stats", show: true },
+    {
+      href: "#gadgets",
+      label: "Gadgets",
+      show: Boolean(brawler?.gadgets?.length),
+    },
+    {
+      href: "#star-powers",
+      label: "Star Powers",
+      show: Boolean(brawler?.starPowers?.length),
+    },
+    { href: "#skins", label: "Skins", show: sortedSkins.length > 0 },
+    { href: "#gears", label: "Gears", show: Boolean(brawler?.gears?.length) },
+  ].filter((link) => link.show);
 
   return (
     <>
@@ -160,6 +214,14 @@ const Detail = () => {
         ]}
       />
       <DetailMain>
+        <CatalogBreadcrumb
+          items={[
+            { label: "Home", path: "/" },
+            { label: "Brawlers", path: "/?type=brawlers" },
+            { label: brawler.name },
+          ]}
+        />
+
         <HeroSection>
           <BrawlerName>
             {brawler.imageUrl3 && (
@@ -188,7 +250,7 @@ const Detail = () => {
                 <BadgeSeparator>|</BadgeSeparator>
               </>
             )}
-            <span>💎 {rarityName}</span>
+            <span>{rarityName}</span>
             {!brawler.released && (
               <>
                 <BadgeSeparator>|</BadgeSeparator>
@@ -197,6 +259,31 @@ const Detail = () => {
             )}
           </RarityBadge>
 
+          <HeroActionRow>
+            <IconActionButton
+              type="button"
+              aria-label={
+                favorited
+                  ? `Remove ${brawler.name} from favorites`
+                  : `Add ${brawler.name} to favorites`
+              }
+              $active={favorited}
+              onClick={() => toggleFavorite("brawlers", brawler.id)}>
+              <FaStar aria-hidden="true" />
+            </IconActionButton>
+            <IconActionButton
+              type="button"
+              aria-label={
+                comparing
+                  ? `Remove ${brawler.name} from compare`
+                  : `Add ${brawler.name} to compare (${selectedCompareIds.length}/${maxCompare})`
+              }
+              $active={comparing}
+              onClick={() => toggleCompare(brawler)}>
+              <FaExchangeAlt aria-hidden="true" />
+            </IconActionButton>
+          </HeroActionRow>
+
           <BrawlerImageContainer $color={rarityColor}>
             <DetailImage
               src={brawler.imageUrl}
@@ -204,73 +291,85 @@ const Detail = () => {
               onError={(event) => applyImageFallbacks(event, brawler)}
             />
           </BrawlerImageContainer>
+        </HeroSection>
 
+        {sectionLinks.length > 1 && (
+          <SectionJumpBar aria-label="On this page">
+            {sectionLinks.map((link) => (
+              <SectionJumpLink key={link.href} href={link.href}>
+                {link.label}
+              </SectionJumpLink>
+            ))}
+          </SectionJumpBar>
+        )}
+
+        <HeroSection id="stats">
           <StatsContainer>
             {stats.hitpoints != null && (
               <StatCard>
-                <span className="stat-icon">❤️</span>
+                <span className="stat-icon">HP</span>
                 <span className="stat-value">{stats.hitpoints}</span>
-                <span className="stat-label">HP</span>
+                <span className="stat-label">Health</span>
               </StatCard>
             )}
             {stats.speed != null && (
               <StatCard>
-                <span className="stat-icon">💨</span>
+                <span className="stat-icon">SPD</span>
                 <span className="stat-value">{stats.speed}</span>
                 <span className="stat-label">Speed</span>
               </StatCard>
             )}
             {stats.attackDamage != null && (
               <StatCard>
-                <span className="stat-icon">⚔️</span>
+                <span className="stat-icon">ATK</span>
                 <span className="stat-value">{stats.attackDamage}</span>
-                <span className="stat-label">Attack dmg</span>
+                <span className="stat-label">Attack</span>
               </StatCard>
             )}
             {stats.attackRange != null && (
               <StatCard>
-                <span className="stat-icon">🎯</span>
+                <span className="stat-icon">RNG</span>
                 <span className="stat-value">{stats.attackRange}</span>
                 <span className="stat-label">Range</span>
               </StatCard>
             )}
             {stats.ammo != null && (
               <StatCard>
-                <span className="stat-icon">🔫</span>
+                <span className="stat-icon">AMMO</span>
                 <span className="stat-value">{stats.ammo}</span>
                 <span className="stat-label">Ammo</span>
               </StatCard>
             )}
             {stats.reloadMs != null && (
               <StatCard>
-                <span className="stat-icon">⏱️</span>
+                <span className="stat-icon">RLD</span>
                 <span className="stat-value">{formatReload(stats.reloadMs)}</span>
                 <span className="stat-label">Reload</span>
               </StatCard>
             )}
             {stats.superDamage != null && stats.superDamage > 0 && (
               <StatCard>
-                <span className="stat-icon">💥</span>
+                <span className="stat-icon">SPR</span>
                 <span className="stat-value">{stats.superDamage}</span>
-                <span className="stat-label">Super dmg</span>
+                <span className="stat-label">Super</span>
               </StatCard>
             )}
             {brawler?.gadgets && (
               <StatCard>
-                <span className="stat-icon">⚡</span>
+                <span className="stat-icon">GAD</span>
                 <span className="stat-value">{brawler.gadgets.length}</span>
                 <span className="stat-label">Gadgets</span>
               </StatCard>
             )}
             {brawler?.starPowers && (
               <StatCard>
-                <span className="stat-icon">⭐</span>
+                <span className="stat-icon">SP</span>
                 <span className="stat-value">{brawler.starPowers.length}</span>
                 <span className="stat-label">Star Powers</span>
               </StatCard>
             )}
             <StatCard>
-              <span className="stat-icon">💎</span>
+              <span className="stat-icon">RAR</span>
               <StatValue className="stat-value" $color={rarityColor}>
                 {rarityName}
               </StatValue>
@@ -337,8 +436,8 @@ const Detail = () => {
         </DescriptionCard>
 
         {brawler?.gadgets?.length > 0 && (
-          <>
-            <SectionTitle>⚡ Gadgets</SectionTitle>
+          <div id="gadgets">
+            <SectionTitle>Gadgets</SectionTitle>
             <AbilitiesGrid>
               {brawler.gadgets.map((item, index) => (
                 <AbilityCard key={item.id || index} $type="gadget">
@@ -355,12 +454,12 @@ const Detail = () => {
                 </AbilityCard>
               ))}
             </AbilitiesGrid>
-          </>
+          </div>
         )}
 
         {brawler?.starPowers?.length > 0 && (
-          <>
-            <SectionTitle>⭐ Star Powers</SectionTitle>
+          <div id="star-powers">
+            <SectionTitle>Star Powers</SectionTitle>
             <AbilitiesGrid>
               {brawler.starPowers.map((item, index) => (
                 <AbilityCard key={item.id || index} $type="starpower">
@@ -377,36 +476,39 @@ const Detail = () => {
                 </AbilityCard>
               ))}
             </AbilitiesGrid>
-          </>
+          </div>
         )}
 
-        {brawler?.skins?.length > 0 && (
-          <>
-            <SectionTitle>🎨 Skins</SectionTitle>
+        {sortedSkins.length > 0 && (
+          <div id="skins">
+            <SectionTitle>Skins</SectionTitle>
             <SkinGrid>
-              {brawler.skins.map((skin) => (
-                <SkinTile
-                  key={skin.id || skin.rawName}
-                  $color={rarityColor}
-                  $hasImage={Boolean(skin.imageUrl)}
-                  title={formatSkinPrice(skin) || skin.name}>
-                  {skin.imageUrl && (
-                    <img
-                      src={skin.imageUrl}
-                      alt={skin.name}
-                      onError={hideBrokenImage}
-                    />
-                  )}
-                  <span>{skin.name}</span>
-                </SkinTile>
-              ))}
+              {sortedSkins.map((skin) => {
+                const price = formatSkinPrice(skin);
+                return (
+                  <SkinTile
+                    key={skin.id || skin.rawName}
+                    $color={rarityColor}
+                    $hasImage={Boolean(skin.imageUrl)}>
+                    {skin.imageUrl && (
+                      <img
+                        src={skin.imageUrl}
+                        alt={skin.name}
+                        onError={hideBrokenImage}
+                      />
+                    )}
+                    <span>{skin.name}</span>
+                    {price ? <small>{price}</small> : <small>Default</small>}
+                  </SkinTile>
+                );
+              })}
             </SkinGrid>
-          </>
+          </div>
         )}
 
         {brawler?.gears?.length > 0 && (
-          <>
-            <SectionTitle>⚙️ Gears</SectionTitle>
+          <div id="gears">
+            <SectionTitle>Gears</SectionTitle>
             <AbilitiesGrid>
               {brawler.gears.map((gear) => (
                 <AbilityCard key={gear.id || gear.rawName}>
@@ -427,10 +529,12 @@ const Detail = () => {
                 </AbilityCard>
               ))}
             </AbilitiesGrid>
-          </>
+          </div>
         )}
 
-        <BackButton onClick={() => navigate(-1)}>← GO BACK</BackButton>
+        <BackButton type="button" onClick={() => navigate("/")}>
+          Back to Lobby
+        </BackButton>
       </DetailMain>
     </>
   );

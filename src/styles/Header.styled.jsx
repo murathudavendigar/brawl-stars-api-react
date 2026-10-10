@@ -3,11 +3,12 @@ import Flex from "./Flex.styled";
 import { fadeInUp } from "./animations";
 
 const HeaderDiv = styled(Flex)`
-  gap: 1rem;
-  padding: 1rem 1.5rem 0.6rem;
-  margin-bottom: 0.5rem;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem 0.5rem;
+  margin-bottom: 0.35rem;
   animation: ${fadeInUp} 0.4s ease-out;
   align-items: stretch;
+  width: min(100%, 1180px);
 `;
 
 export default HeaderDiv;
@@ -22,7 +23,8 @@ export const SearchInput = styled.input`
   font-weight: 700;
   font-size: 1rem;
   color: var(--color-text-body);
-  min-width: 250px;
+  min-width: 220px;
+  flex: 1 1 220px;
   transition: box-shadow 0.12s ease, transform 0.12s ease;
 
   &::placeholder {
@@ -34,14 +36,10 @@ export const SearchInput = styled.input`
     outline: none;
     box-shadow: var(--shadow-3d), 0 0 0 3px var(--color-gold);
   }
-
-  @media (max-width: 768px) {
-    min-width: 200px;
-  }
 `;
 
 export const SearchButton = styled.button`
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem 1.35rem;
   border-radius: 14px;
   cursor: pointer;
   font-family: var(--font-primary);
@@ -114,10 +112,20 @@ export const SelectList = styled.select`
     outline: none;
     box-shadow: var(--shadow-3d), 0 0 0 3px var(--color-gold);
   }
+`;
 
-  &:hover {
-    background-color: var(--panel-bg);
-  }
+export const ControlBar = styled.div`
+  width: min(100%, 1180px);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.65rem 1rem;
+  margin: 0 auto 0.65rem;
+  background: var(--panel-bg);
+  border: 3px solid var(--color-ink);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-3d);
 `;
 
 export const ControlsPanel = styled.div`
@@ -131,7 +139,7 @@ export const ControlsPanel = styled.div`
   border: 3px solid var(--color-ink);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-3d);
-  animation: ${fadeInUp} 0.45s ease-out;
+  animation: ${fadeInUp} 0.35s ease-out;
 `;
 
 export const FilterLabel = styled.label`
@@ -146,7 +154,7 @@ export const FilterLabel = styled.label`
 
 export const ControlButton = styled(SearchButton)`
   border-radius: 14px;
-  padding: 0.85rem 1rem;
+  padding: 0.75rem 1rem;
   align-self: end;
 `;
 
@@ -157,7 +165,7 @@ export const ResultMeta = styled.div`
   align-items: center;
   flex-wrap: wrap;
   gap: 0.75rem;
-  margin: 0 auto 0.35rem;
+  margin: 0 auto 0.5rem;
   padding: 0 1.25rem;
   color: var(--color-text-body);
   font-family: var(--font-secondary);
