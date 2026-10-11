@@ -1,5 +1,4 @@
 import styled, { css } from "styled-components";
-import Flex from "./Flex.styled";
 import { fadeInUp, shimmer } from "./animations";
 
 const comicPanel = css`
@@ -8,16 +7,35 @@ const comicPanel = css`
   box-shadow: var(--shadow-3d);
 `;
 
-export const CardMain = styled(Flex)`
-  padding: 1.5rem;
-  width: 100%;
-  gap: 1.5rem;
+export const CardMain = styled.div`
+  width: min(100%, 1200px);
+  margin: 0 auto;
+  padding: 0.75rem 1rem 2rem;
+  display: ${({ $stack }) => ($stack ? "flex" : "grid")};
+  flex-direction: ${({ $stack }) => ($stack ? "column" : undefined)};
+  align-items: ${({ $stack }) => ($stack ? "stretch" : "stretch")};
+  grid-template-columns: ${({ $stack, $compact }) =>
+    $stack
+      ? undefined
+      : `repeat(auto-fill, minmax(${$compact ? "10.5rem" : "13.5rem"}, 1fr))`};
+  gap: ${({ $stack }) => ($stack ? "0.65rem" : "1.1rem")};
+  justify-items: stretch;
   overflow-y: ${({ $overflowY }) => $overflowY || "visible"};
+
+  @media (max-width: 640px) {
+    padding: 0.35rem 0.15rem 1.5rem;
+    gap: ${({ $stack }) => ($stack ? "0.5rem" : "0.55rem")};
+    grid-template-columns: ${({ $stack }) =>
+      $stack ? undefined : "repeat(2, minmax(0, 1fr))"};
+  }
 `;
 
-const CardsInfo = styled(Flex)`
+const CardsInfo = styled.article`
   ${comicPanel}
+  display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
   background-color: var(--panel-bg);
   background-image: linear-gradient(
       ${({ $background }) => $background || "var(--color-primary)"},
@@ -28,15 +46,14 @@ const CardsInfo = styled(Flex)`
       transparent 0%,
       ${({ $background }) => $background || "var(--color-primary)"}22 100%
     );
-  background-size: 100% 148px, 100% 100%;
+  background-size: 100% 96px, 100% 100%;
   background-repeat: no-repeat;
   background-position: top, center;
-  gap: ${({ $gap }) => $gap || "0.55rem"};
-  width: ${({ $compact }) => ($compact ? "11.5rem" : "14rem")};
-  min-height: ${({ $compact }) => ($compact ? "22rem" : "26rem")};
-  height: auto;
-  margin: 0.5rem;
-  padding: 3.1rem 0.9rem 1.15rem;
+  gap: 0;
+  width: 100%;
+  height: ${({ $compact }) => ($compact ? "22.5rem" : "25.5rem")};
+  margin: 0;
+  padding: 0.5rem 0.65rem 0.65rem;
   font-size: 1rem;
   border-radius: var(--radius-xl);
   position: relative;
@@ -58,7 +75,7 @@ const CardsInfo = styled(Flex)`
   &::before {
     content: "";
     position: absolute;
-    top: 148px;
+    top: 96px;
     left: 0;
     right: 0;
     height: 3px;
@@ -84,26 +101,34 @@ const CardsInfo = styled(Flex)`
     border-radius: 10px;
     box-shadow: 0 3px 0 #1a1020;
     text-shadow: none;
-    margin: 0 0 0.35rem;
-    padding: 0.28rem 0.45rem;
+    margin: 0;
+    padding: 0.18rem 0.35rem;
     text-align: center;
-    font-size: 1.15rem;
+    font-size: 0.95rem;
     line-height: 1.15;
     width: 100%;
+    height: 1.95rem;
     z-index: 2;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   p {
-    display: ${({ $compact }) => ($compact ? "-webkit-box" : "block")};
-    -webkit-line-clamp: ${({ $compact }) => ($compact ? 4 : "initial")};
+    display: -webkit-box;
+    -webkit-line-clamp: ${({ $compact }) => ($compact ? 2 : 3)};
     -webkit-box-orient: vertical;
     overflow: hidden;
     color: var(--color-text-body);
     font-family: var(--font-secondary);
-    font-size: 0.82rem;
+    font-size: 0.75rem;
     font-weight: 700;
-    line-height: 1.4;
+    line-height: 1.3;
     text-align: center;
+    margin: 0;
+    min-height: ${({ $compact }) => ($compact ? "1.95rem" : "2.925rem")};
+    max-height: ${({ $compact }) => ($compact ? "1.95rem" : "2.925rem")};
+    flex: 0 0 auto;
   }
 
   img {
@@ -113,17 +138,122 @@ const CardsInfo = styled(Flex)`
     border-radius: 12px;
     background: var(--color-ink);
     box-shadow: 0 3px 0 #1a1020;
+    width: ${({ $compact }) => ($compact ? "96px" : "112px")};
+    height: ${({ $compact }) => ($compact ? "96px" : "112px")};
+    object-fit: contain;
+    flex: 0 0 auto;
+  }
+
+  @media (max-width: 640px) {
+    height: ${({ $compact }) => ($compact ? "17.5rem" : "19.25rem")};
+    background-size: 100% 72px, 100% 100%;
+    padding: 0.35rem 0.4rem 0.45rem;
+
+    &::before {
+      top: 72px;
+    }
+
+    &:hover {
+      transform: translateY(-3px);
+    }
+
+    h2,
+    h3 {
+      font-size: 0.78rem;
+      height: 1.55rem;
+      padding: 0.1rem 0.2rem;
+      border-width: 2px;
+      border-radius: 8px;
+    }
+
+    p {
+      -webkit-line-clamp: 2;
+      font-size: 0.65rem;
+      line-height: 1.25;
+      min-height: 1.625rem;
+      max-height: 1.625rem;
+    }
+
+    img {
+      width: ${({ $compact }) => ($compact ? "64px" : "76px")};
+      height: ${({ $compact }) => ($compact ? "64px" : "76px")};
+      border-width: 2px;
+      border-radius: 10px;
+      filter: drop-shadow(0 4px 0 rgba(11, 10, 18, 0.4));
+    }
   }
 `;
 
 export default CardsInfo;
+
+export const CardHeaderBlock = styled.div`
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 5.1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.25rem;
+  flex: 0 0 5.1rem;
+  padding-top: 1.65rem;
+  box-sizing: border-box;
+  overflow: hidden;
+
+  @media (max-width: 640px) {
+    height: 3.85rem;
+    flex: 0 0 3.85rem;
+    padding-top: 1.25rem;
+    gap: 0.15rem;
+  }
+`;
+
+export const CardBadgeSlot = styled.div`
+  min-height: 1.45rem;
+  height: 1.45rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  flex: 0 0 1.45rem;
+  overflow: hidden;
+
+  @media (max-width: 640px) {
+    min-height: 1.2rem;
+    height: 1.2rem;
+    flex: 0 0 1.2rem;
+  }
+`;
+
+export const CardBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding-top: 0.45rem;
+
+  @media (max-width: 640px) {
+    gap: 0.2rem;
+    padding-top: 0.3rem;
+
+    & > div:first-child {
+      width: 76px !important;
+      height: 76px !important;
+    }
+  }
+`;
 
 export const ButtonCard = styled.button`
   padding: 0.55rem 1.15rem;
   cursor: pointer;
   border-radius: 14px;
   position: relative;
-  margin: ${({ $static }) => ($static ? "1rem auto" : "0.65rem auto 0")};
+  margin: ${({ $static }) => ($static ? "1rem auto" : "0 auto")};
+  margin-top: ${({ $static }) => ($static ? "1rem" : "auto")};
   font-family: var(--font-primary);
   font-size: 0.9rem;
   background: var(--color-primary);
@@ -136,6 +266,9 @@ export const ButtonCard = styled.button`
   pointer-events: auto;
   white-space: nowrap;
   display: block;
+  flex: 0 0 auto;
+  width: calc(100% - 0.5rem);
+  max-width: 11rem;
 
   &::before {
     content: "";
@@ -160,26 +293,48 @@ export const ButtonCard = styled.button`
     transform: translateY(2px);
     box-shadow: var(--shadow-3d-pressed);
   }
+
+  @media (max-width: 640px) {
+    padding: 0.4rem 0.55rem;
+    font-size: 0.72rem;
+    max-width: none;
+    width: 100%;
+    border-radius: 10px;
+  }
 `;
 
 export const CardStatusRow = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
   gap: 0.35rem;
-  margin-top: 0.25rem;
+  min-height: 1.35rem;
+  height: 1.35rem;
+  margin-top: 0;
+  flex: 0 0 1.35rem;
+  overflow: hidden;
+
+  @media (max-width: 640px) {
+    min-height: 1.1rem;
+    height: 1.1rem;
+    flex: 0 0 1.1rem;
+  }
 `;
 
 export const CardSkeleton = styled.div`
   ${comicPanel}
-  width: 14rem;
-  min-height: 26rem;
-  height: 26rem;
-  margin: 0.5rem;
+  width: 100%;
+  height: 25.5rem;
+  margin: 0;
   border-radius: var(--radius-xl);
   position: relative;
   overflow: hidden;
   background: var(--panel-bg);
+
+  @media (max-width: 640px) {
+    height: 19.25rem;
+  }
 
   &::after {
     content: "";
@@ -208,6 +363,13 @@ export const CardActionRow = styled.div`
   justify-content: flex-end;
   gap: 0.5rem;
   z-index: 12;
+
+  @media (max-width: 640px) {
+    top: 6px;
+    left: 6px;
+    right: 6px;
+    gap: 0.3rem;
+  }
 `;
 
 export const IconActionButton = styled.button`
@@ -224,6 +386,15 @@ export const IconActionButton = styled.button`
   font-size: 0.9rem;
   opacity: 1;
   transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+
+  @media (max-width: 640px) {
+    width: 26px;
+    height: 26px;
+    border-width: 2px;
+    border-radius: 8px;
+    font-size: 0.72rem;
+    box-shadow: 0 2px 0 #1a1020;
+  }
 
   &:hover {
     transform: translateY(-2px);
@@ -299,7 +470,8 @@ export const EmptyState = styled.div`
 
 export const CardTitle = styled.h2`
   text-align: center;
-  margin-bottom: ${({ $compact }) => ($compact ? "0.5rem" : "0")};
+  margin: 0;
+  flex: 0 0 auto;
 `;
 
 export const CardText = styled.p`

@@ -24,8 +24,14 @@ const SkeletonBase = styled.div`
 // Card Skeleton
 export const SkeletonCard = styled(SkeletonBase)`
   width: 100%;
-  height: 280px;
-  border-radius: 16px;
+  height: 25.5rem;
+  border-radius: var(--radius-xl);
+  border: 3px solid var(--color-ink);
+  box-shadow: var(--shadow-3d);
+
+  @media (max-width: 640px) {
+    height: 19.25rem;
+  }
   position: relative;
   overflow: hidden;
 
@@ -82,11 +88,10 @@ export const SkeletonButton = styled(SkeletonBase)`
 // Grid of Card Skeletons
 const SkeletonGridWrapper = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1.5rem;
-  padding: 2rem;
-  width: 100%;
-  max-width: 1400px;
+  grid-template-columns: repeat(auto-fill, minmax(13.5rem, 1fr));
+  gap: 1.1rem;
+  padding: 0.75rem 1rem 2rem;
+  width: min(100%, 1200px);
   margin: 0 auto;
 `;
 

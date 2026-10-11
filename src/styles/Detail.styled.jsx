@@ -582,15 +582,29 @@ export const LoadMoreButton = styled.button`
 export const ClassBadge = styled.span`
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.35rem;
-  padding: 0.28rem 0.75rem;
+  padding: 0.15rem 0.55rem;
+  max-width: 100%;
+  max-height: 1.55rem;
   background: ${({ $color }) => $color || "var(--color-primary)"};
   color: ${({ $color }) => inkOnColor($color)};
   font-family: var(--font-primary);
-  font-size: 0.85rem;
+  font-size: 0.7rem;
   border: 3px solid var(--color-ink);
-  border-radius: 12px;
-  box-shadow: var(--shadow-3d);
+  border-radius: 10px;
+  box-shadow: 0 2px 0 #1a1020;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (max-width: 640px) {
+    padding: 0.08rem 0.35rem;
+    max-height: 1.15rem;
+    font-size: 0.58rem;
+    border-width: 2px;
+    border-radius: 8px;
+  }
   text-shadow: ${({ $color }) =>
     inkOnColor($color) === "#0B0A12"
       ? "none"

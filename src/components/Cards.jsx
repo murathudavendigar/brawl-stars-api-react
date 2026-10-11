@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FaExchangeAlt, FaStar } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
 import { CLASS_COLORS } from "../lib/gameData";
 import CardsInfo, {
   ButtonCard,
   CardActionRow,
+  CardBadgeSlot,
+  CardBody,
+  CardHeaderBlock,
   CardMain,
   CardStatusRow,
   CardText,
@@ -18,10 +20,6 @@ import StatusBadge from "./common/StatusBadge";
 import LazyImage from "./common/LazyImage";
 
 const ITEMS_PER_PAGE = 20;
-
-const SpacedLazyImage = styled(LazyImage)`
-  margin-bottom: 0.65rem;
-`;
 
 const detailPath = (searchType, id) => {
   if (searchType === "brawlers") return `/brawlers/${id}`;
@@ -88,14 +86,16 @@ const Cards = ({
     const background =
       item?.bgColor || item?.rarity?.color || item?.gameMode?.color;
     const classColor =
-      CLASS_COLORS[item?.className] || item?.rarity?.color || "var(--color-primary)";
+      CLASS_COLORS[item?.className] ||
+      item?.rarity?.color ||
+      "var(--color-primary)";
+    const imageSize = isCompact ? "96px" : "112px";
+    const modeImageSize = isCompact ? "64px" : "80px";
 
     return (
       <CardsInfo
         key={item.id || index}
-        justify="baseline"
         $background={background}
-        $gap={searchType === "maps" ? "0.65rem" : undefined}
         $compact={isCompact}
         role="link"
         tabIndex={0}
@@ -135,81 +135,74 @@ const Cards = ({
           )}
         </CardActionRow>
 
-        <CardTitle $compact={isCompact}>{item.name}</CardTitle>
+        <CardHeaderBlock>
+          <CardTitle $compact={isCompact}>{item.name}</CardTitle>
+          <CardBadgeSlot>
+            {searchType === "brawlers" && item.className ? (
+              <ClassBadge $color={classColor}>{item.className}</ClassBadge>
+            ) : searchType === "maps" && item?.gameMode?.name ? (
+              <CardText>{item.gameMode.name}</CardText>
+            ) : null}
+          </CardBadgeSlot>
+        </CardHeaderBlock>
 
-        {searchType === "brawlers" && item.className && (
-          <ClassBadge $color={classColor}>{item.className}</ClassBadge>
-        )}
+        <CardBody>
+          <LazyImage
+            src={
+              searchType === "maps"
+                ? item.imageUrl
+                : item.imageUrl || item.imageUrl2
+            }
+            fallbackSrc={item.imageUrl2}
+            alt={`${item.name} ${
+              searchType === "brawlers"
+                ? "brawler"
+                : searchType === "maps"
+                  ? "map"
+                  : "game mode"
+            }`}
+            width={searchType === "gamemodes" ? modeImageSize : imageSize}
+            height={searchType === "gamemodes" ? modeImageSize : imageSize}
+            missingLabel={searchType === "brawlers" ? "NEW" : undefined}
+          />
 
-        {searchType === "maps" && (
-          <>
-            <LazyImage
-              src={item?.gameMode?.imageUrl}
-              alt=""
-              width="48px"
-              height="48px"
-            />
-            <CardText>{item?.gameMode?.name}</CardText>
-          </>
-        )}
+          <p>{item.description || "\u00A0"}</p>
 
-        <SpacedLazyImage
-          src={
-            searchType === "maps"
-              ? item.imageUrl
-              : item.imageUrl || item.imageUrl2
-          }
-          fallbackSrc={
-            searchType === "brawlers"
-              ? [item.imageUrl2, item.iconUrl]
-              : item.imageUrl2
-          }
-          alt={`${item.name} ${
-            searchType === "brawlers"
-              ? "brawler"
-              : searchType === "maps"
-                ? "map"
-                : "game mode"
-          }`}
-          width={searchType === "gamemodes" ? "90px" : "150px"}
-          height={searchType === "gamemodes" ? "90px" : "150px"}
-          missingLabel={searchType === "brawlers" ? "NEW" : undefined}
-        />
+          <CardStatusRow>
+            {searchType === "brawlers" && !item.released && (
+              <StatusBadge kind="unreleased">Unreleased</StatusBadge>
+            )}
+            {searchType === "maps" && (
+              <StatusBadge kind={item.disabled ? "retired" : "available"}>
+                {item.disabled ? "Retired" : "Available"}
+              </StatusBadge>
+            )}
+          </CardStatusRow>
 
-        {item.description && <p>{item.description}</p>}
-
-        <CardStatusRow>
-          {searchType === "brawlers" && !item.released && (
-            <StatusBadge kind="unreleased">Unreleased</StatusBadge>
-          )}
-          {searchType === "maps" && (
-            <StatusBadge kind={item.disabled ? "retired" : "available"}>
-              {item.disabled ? "Retired" : "Available"}
-            </StatusBadge>
-          )}
-        </CardStatusRow>
-
-        <ButtonCard
-          type="button"
-          onClick={(event) => {
-            event.stopPropagation();
-            openDetail(item);
-          }}>
-          View Details
-        </ButtonCard>
+          <ButtonCard
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              openDetail(item);
+            }}>
+            View Details
+          </ButtonCard>
+        </CardBody>
       </CardsInfo>
     );
   };
 
   return (
-    <CardMain wrap="wrap" $overflowY="visible">
-      {visibleItems.map(renderCard)}
+    <>
+      <CardMain $compact={isCompact} $overflowY="visible">
+        {visibleItems.map(renderCard)}
+      </CardMain>
       {hasMore && (
         <ButtonCard type="button" onClick={loadMore} $static>
           Load More
         </ButtonCard>
       )}
-    </CardMain>
+    </>
   );
 };
 

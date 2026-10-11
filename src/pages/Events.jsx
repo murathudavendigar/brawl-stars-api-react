@@ -368,9 +368,7 @@ const Events = () => {
         <EventNotice>{EVENTS_FALLBACK_NOTICE}</EventNotice>
       )}
 
-      <CardMain
-        wrap="wrap"
-        style={{ flexDirection: "column", alignItems: "stretch" }}>
+      <CardMain $stack>
         {loading ? (
           <SkeletonEventGrid count={6} />
         ) : currentItems?.length === 0 ? (

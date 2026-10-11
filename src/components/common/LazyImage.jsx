@@ -8,8 +8,16 @@ const shimmer = keyframes`
 
 const ImageWrapper = styled.div`
   position: relative;
-  display: inline-block;
+  display: block;
+  width: ${({ $width }) => $width || "auto"};
+  height: ${({ $height }) => $height || "auto"};
+  flex: 0 0 auto;
   overflow: hidden;
+
+  & > * {
+    width: 100%;
+    height: 100%;
+  }
 `;
 
 const Placeholder = styled.div`
@@ -25,12 +33,17 @@ const Placeholder = styled.div`
   background-size: 200% 100%;
   animation: ${shimmer} 1.5s infinite;
   border-radius: 8px;
+
+  @media (max-width: 640px) {
+    min-height: 0;
+  }
 `;
 
 const StyledImage = styled.img`
   opacity: ${({ $isLoaded }) => ($isLoaded ? 1 : 0)};
   transition: opacity 0.4s ease-in-out;
   display: block;
+  object-fit: contain;
 `;
 
 export const MissingPortrait = styled.div`
@@ -48,6 +61,7 @@ export const MissingPortrait = styled.div`
   font-family: var(--font-primary);
   text-align: center;
   text-shadow: 2px 2px 0 var(--color-ink);
+  box-sizing: border-box;
 
   small {
     font-size: 0.7rem;
@@ -57,6 +71,20 @@ export const MissingPortrait = styled.div`
   strong {
     font-size: 1.35rem;
     line-height: 1;
+  }
+
+  @media (max-width: 640px) {
+    border-width: 2px;
+    border-radius: 10px;
+    gap: 0.1rem;
+
+    small {
+      font-size: 0.55rem;
+    }
+
+    strong {
+      font-size: 0.95rem;
+    }
   }
 `;
 
@@ -132,7 +160,11 @@ const LazyImage = ({
   };
 
   return (
-    <ImageWrapper ref={imgRef} className={className}>
+    <ImageWrapper
+      ref={imgRef}
+      className={className}
+      $width={width}
+      $height={height}>
       {hasFailed ? (
         <MissingPortrait $width={width} $height={height} aria-hidden="true">
           <small>STARR PARK</small>
@@ -158,6 +190,9 @@ const LazyImage = ({
                 position: isLoaded ? "relative" : "absolute",
                 top: 0,
                 left: 0,
+                width,
+                height,
+                objectFit: "contain",
               }}
               onLoad={handleLoad}
               onError={handleError}

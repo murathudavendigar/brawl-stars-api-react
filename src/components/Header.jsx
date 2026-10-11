@@ -1,5 +1,6 @@
 import HeaderDiv, {
   ControlBar,
+  ControlBarRow,
   ControlButton,
   ControlsPanel,
   FilterLabel,
@@ -70,49 +71,57 @@ const Header = ({
       </HeaderDiv>
 
       <ControlBar>
-        <FilterLabel>
-          Sort
-          <SelectList
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            aria-label="Sort results">
-            {showBrawlerFilters && <option value="newest">Newest first</option>}
-            {showBrawlerFilters && <option value="oldest">Oldest first</option>}
-            <option value="name-asc">Name A-Z</option>
-            <option value="name-desc">Name Z-A</option>
-            {showBrawlerFilters && <option value="rarity">Rarity</option>}
-            {showBrawlerFilters && <option value="class">Class</option>}
-            {showMapFilters && <option value="mode">Game mode</option>}
-          </SelectList>
-        </FilterLabel>
+        <ControlBarRow>
+          <FilterLabel>
+            Sort
+            <SelectList
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              aria-label="Sort results">
+              {showBrawlerFilters && (
+                <option value="newest">Newest first</option>
+              )}
+              {showBrawlerFilters && (
+                <option value="oldest">Oldest first</option>
+              )}
+              <option value="name-asc">Name A-Z</option>
+              <option value="name-desc">Name Z-A</option>
+              {showBrawlerFilters && <option value="rarity">Rarity</option>}
+              {showBrawlerFilters && <option value="class">Class</option>}
+              {showMapFilters && <option value="mode">Game mode</option>}
+            </SelectList>
+          </FilterLabel>
 
-        <FilterLabel>
-          View
-          <SelectList
-            value={viewMode}
-            onChange={(e) => setViewMode(e.target.value)}
-            aria-label="View mode">
-            <option value="grid">Grid</option>
-            <option value="compact">Compact</option>
-          </SelectList>
-        </FilterLabel>
+          <FilterLabel>
+            View
+            <SelectList
+              value={viewMode}
+              onChange={(e) => setViewMode(e.target.value)}
+              aria-label="View mode">
+              <option value="grid">Grid</option>
+              <option value="compact">Compact</option>
+            </SelectList>
+          </FilterLabel>
+        </ControlBarRow>
 
-        <ControlButton
-          type="button"
-          onClick={() => setShowFavorites(!showFavorites)}>
-          {showFavorites ? "All Items" : "Favorites"}
-        </ControlButton>
-        <ControlButton
-          type="button"
-          onClick={onRandomPick}
-          disabled={!resultCount}>
-          Random Pick
-        </ControlButton>
-        <ControlButton
-          type="button"
-          onClick={() => setAdvancedOpen(!advancedOpen)}>
-          {advancedOpen ? "Hide Filters" : "More Filters"}
-        </ControlButton>
+        <ControlBarRow $cols="actions">
+          <ControlButton
+            type="button"
+            onClick={() => setShowFavorites(!showFavorites)}>
+            {showFavorites ? "All Items" : "Favorites"}
+          </ControlButton>
+          <ControlButton
+            type="button"
+            onClick={onRandomPick}
+            disabled={!resultCount}>
+            Random
+          </ControlButton>
+          <ControlButton
+            type="button"
+            onClick={() => setAdvancedOpen(!advancedOpen)}>
+            {advancedOpen ? "Hide Filters" : "Filters"}
+          </ControlButton>
+        </ControlBarRow>
       </ControlBar>
 
       {advancedOpen && (

@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { FaLink } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import NavbarLogoImg from "../assets/Brawl_Stars_logo_2025.svg";
 import Cards from "../components/Cards";
 import Header from "../components/Header";
 import RecentStrip from "../components/RecentStrip";
@@ -22,7 +21,7 @@ import {
   pickWinners,
 } from "../lib/compareStats";
 import { APP_INFO, SEARCH_TYPES, getCatalogUrl } from "../lib/config";
-import { PRODUCT_TIP, COMPARE_LIMIT_HINT } from "../lib/copy";
+import { COMPARE_LIMIT_HINT } from "../lib/copy";
 import { enrichBrawler } from "../lib/gameData";
 import {
   ButtonCard,
@@ -36,7 +35,6 @@ import {
   StatMeterRow,
 } from "../styles/Detail.styled";
 import {
-  BrandMark,
   CatalogHero,
   CatalogLead,
   HeaderText,
@@ -274,11 +272,10 @@ const Home = () => {
       />
       <HomeMainDiv>
         <CatalogHero>
-          <BrandMark src={NavbarLogoImg} alt="" />
-          <HeaderText>Brawl Stars {getPageTitle()}</HeaderText>
+          <HeaderText>{getPageTitle()}</HeaderText>
           <CatalogLead>
-            Browse {getPageTitle().toLowerCase()} with search, filters,
-            favorites, and compare. {PRODUCT_TIP}
+            Search, filter, favorite, and compare {getPageTitle().toLowerCase()}{" "}
+            from BrawlAPI.
           </CatalogLead>
         </CatalogHero>
 

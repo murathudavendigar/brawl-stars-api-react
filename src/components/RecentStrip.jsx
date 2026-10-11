@@ -3,18 +3,23 @@ import styled from "styled-components";
 
 const Strip = styled.section`
   width: min(100%, 1180px);
-  margin: 0 auto 1rem;
-  padding: 0.85rem 1rem;
+  margin: 0 auto 0.75rem;
+  padding: 0.55rem 0.75rem;
   background: var(--panel-bg);
   border: 3px solid var(--color-ink);
   border-radius: 14px;
   box-shadow: var(--shadow-3d);
+
+  @media (max-width: 640px) {
+    margin-bottom: 0.45rem;
+    padding: 0.4rem 0.55rem;
+  }
 `;
 
 const Title = styled.h2`
-  margin: 0 0 0.65rem;
+  margin: 0 0 0.45rem;
   font-family: var(--font-primary);
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: var(--color-gold);
   text-shadow: 2px 2px 0 var(--color-ink);
 `;

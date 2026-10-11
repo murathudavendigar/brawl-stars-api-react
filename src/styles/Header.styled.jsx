@@ -3,12 +3,20 @@ import Flex from "./Flex.styled";
 import { fadeInUp } from "./animations";
 
 const HeaderDiv = styled(Flex)`
-  gap: 0.75rem;
-  padding: 1rem 1.25rem 0.5rem;
-  margin-bottom: 0.35rem;
+  gap: 0.65rem;
+  padding: 0.5rem 0;
+  margin: 0 auto 0.5rem;
   animation: ${fadeInUp} 0.4s ease-out;
   align-items: stretch;
   width: min(100%, 1180px);
+
+  @media (max-width: 640px) {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.5rem;
+    padding: 0.25rem 0;
+    margin-bottom: 0.35rem;
+  }
 `;
 
 export default HeaderDiv;
@@ -23,9 +31,16 @@ export const SearchInput = styled.input`
   font-weight: 700;
   font-size: 1rem;
   color: var(--color-text-body);
-  min-width: 220px;
-  flex: 1 1 220px;
+  min-width: 0;
+  flex: 1 1 12rem;
   transition: box-shadow 0.12s ease, transform 0.12s ease;
+
+  @media (max-width: 640px) {
+    grid-column: 1 / -1;
+    width: 100%;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.95rem;
+  }
 
   &::placeholder {
     color: var(--color-text-muted);
@@ -51,6 +66,11 @@ export const SearchButton = styled.button`
   box-shadow: var(--shadow-3d);
   position: relative;
   overflow: hidden;
+
+  @media (max-width: 640px) {
+    padding: 0.65rem 0.9rem;
+    font-size: 0.88rem;
+  }
 
   &::before {
     content: "";
@@ -101,6 +121,14 @@ export const SelectList = styled.select`
   background-position: right 0.85rem center;
   background-size: 1rem;
   padding-right: 2.8rem;
+  min-width: 0;
+  width: 100%;
+
+  @media (max-width: 640px) {
+    padding: 0.6rem 2.2rem 0.6rem 0.75rem;
+    font-size: 0.88rem;
+    background-position: right 0.65rem center;
+  }
 
   option {
     background: var(--nav-bg);
@@ -116,16 +144,34 @@ export const SelectList = styled.select`
 
 export const ControlBar = styled.div`
   width: min(100%, 1180px);
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.65rem;
-  padding: 0.65rem 1rem;
-  margin: 0 auto 0.65rem;
+  display: grid;
+  gap: 0.55rem;
+  padding: 0.65rem;
+  margin: 0 auto 0.45rem;
   background: var(--panel-bg);
   border: 3px solid var(--color-ink);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-3d);
+
+  @media (max-width: 640px) {
+    gap: 0.45rem;
+    padding: 0.55rem;
+    margin-bottom: 0.35rem;
+  }
+`;
+
+export const ControlBarRow = styled.div`
+  display: grid;
+  gap: 0.5rem;
+  align-items: end;
+  grid-template-columns: ${({ $cols }) =>
+    $cols === "actions"
+      ? "repeat(3, minmax(0, 1fr))"
+      : "repeat(2, minmax(0, 1fr))"};
+
+  @media (max-width: 640px) {
+    gap: 0.4rem;
+  }
 `;
 
 export const ControlsPanel = styled.div`
@@ -154,8 +200,20 @@ export const FilterLabel = styled.label`
 
 export const ControlButton = styled(SearchButton)`
   border-radius: 14px;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 0.85rem;
   align-self: end;
+  height: fit-content;
+  white-space: nowrap;
+  font-size: 0.92rem;
+
+  @media (max-width: 640px) {
+    padding: 0.7rem 0.25rem;
+    min-height: 2.75rem;
+    font-size: 0.78rem;
+    white-space: nowrap;
+    line-height: 1.1;
+    text-align: center;
+  }
 `;
 
 export const ResultMeta = styled.div`
@@ -171,4 +229,11 @@ export const ResultMeta = styled.div`
   font-family: var(--font-secondary);
   font-size: 0.9rem;
   font-weight: 700;
+
+  @media (max-width: 640px) {
+    margin: 0 auto 0.25rem;
+    padding: 0 0.25rem;
+    font-size: 0.8rem;
+    gap: 0.4rem;
+  }
 `;
